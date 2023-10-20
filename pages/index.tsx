@@ -78,14 +78,14 @@ export default function Home() {
     const res = await axiosQuery({ url: `/apps?type=apps&page=1` });
 
     console.log(res.data);
-    setApps(res.data.slice(0, 7));
+    setApps(res.data.rows.slice(0, 7));
   };
 
   const getGames = async () => {
     const res = await axiosQuery({ url: `/apps?type=games&page=1` });
 
     console.log(res.data);
-    setGames(res.data.slice(0, 15));
+    setGames(res.data.rows.slice(0, 15));
   };
 
   const getProducts = async (page) => {
