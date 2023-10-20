@@ -22,7 +22,7 @@ interface Props {
   chats: IChat[];
   users: number[];
   scrollToBottom: () => void;
-  userTimeRecords: { userId: number; time: string }[];
+  userTimeRecords: { userId: number; time: string; chat: number }[];
 }
 
 const ActiveChat = forwardRef(

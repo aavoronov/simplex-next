@@ -45,6 +45,7 @@ interface DataType {
         id: number;
         name: string;
         reviews: Review[];
+        pics: string[];
       }[];
     };
   };
@@ -65,6 +66,7 @@ export interface ProductWithReviews {
   id: number;
   name: string;
   reviews: Review[];
+  pics: string[];
 }
 
 const ProductProperties = ({ properties }: { properties: Record<string, string> }) => {

@@ -34,7 +34,7 @@ export default function Success({ login, password }: { login: string; password: 
         login: login,
         password: password,
       },
-      onError: (e) => {
+      onError: (e: any) => {
         dispatch(toggle({ type: "error", text: e.response.data.message }));
       },
     });

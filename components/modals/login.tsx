@@ -35,7 +35,7 @@ export default function Login() {
         login: values.email,
         password: values.password,
       },
-      onError: (e) => {
+      onError: (e: any) => {
         dispatch(toggle({ type: "error", text: e.response.data.message }));
       },
     });

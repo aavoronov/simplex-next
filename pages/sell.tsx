@@ -214,12 +214,12 @@ const ProductDetails = ({ stage, setStage }: { stage: number; setStage: SetState
         <div className='add_item-title'>Выберите рубрику</div>
         <div className='item-category_list-content'>
           <ul className='list-none p-0 m-0'>
-            {cats.map((value, i) => (
+            {/* {cats.map((value, i) => (
               <li className={`d-flex align-items-center justify-content-between position-relative ${i == 0 ? "active" : ""}`} key={i}>
                 {value}
                 <span className='check_indicator d-block position-relative'></span>
               </li>
-            ))}
+            ))} */}
           </ul>
         </div>
       </div>

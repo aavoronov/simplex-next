@@ -43,7 +43,7 @@ export default function Phone() {
             <div className='form-row position-relative'>
               <PhoneInput
                 onChange={(value) => setPhone(value)}
-                className='d-flex flex-row-reverse align-items-center justify-content-between'
+                // className='d-flex flex-row-reverse align-items-center justify-content-between'
                 country={"ru"}
                 regions={"europe"}
               />
