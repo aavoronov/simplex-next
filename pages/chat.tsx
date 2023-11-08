@@ -3,17 +3,19 @@ import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { MainLayout } from "../layouts/MainLayout";
 import ActiveChat from "@/components/chat/ActiveChat";
 import ChatList from "@/components/chat/ChatList";
-import { useAppSelector } from "@/utilities/hooks";
+import { useAppDispatch, useAppSelector } from "@/utilities/hooks";
 import socket from "@/utilities/socket";
 import { axiosQuery } from "@/utilities/utilities";
 import { getCookie } from "cookies-next";
 import "react-medium-image-zoom/dist/styles.css";
 import { useWindowSize } from "@/hooks/useWindowSize";
+import { actionLoginTrue } from "@/store/actions/modal";
+import SimplexChat from "@/components/chat/SimplexChat";
+import SupportChat from "@/components/chat/SupportChat";
 
 export interface User {
   id: number;
   name: string | null;
-  login: string;
   profilePic?: string;
 }
 
@@ -25,13 +27,17 @@ export interface Access {
 export interface IChat {
   id: number;
   accesses: Access[];
+  type?: "simplex" | "support" | "user";
 }
 
+interface RootRoomAccess {
+  id: number;
+  chat: IChat;
+}
 export interface IncomingMessage {
   message: string;
   createdAt: string;
-  name?: string;
-  login: string;
+  name: string;
   userId: number;
   roomId: number;
   files?: string[];
@@ -40,7 +46,6 @@ export interface IncomingMessage {
 
 export interface OutgoingMessage {
   text: string;
-  name?: string;
   login: string;
   userId: number;
   roomId: number;
@@ -56,10 +61,74 @@ interface TimeRecord {
   chat: number;
 }
 
-export default function Chat() {
-  const { id, login, name } = useAppSelector((state) => state.user);
+const simplexChat: RootRoomAccess = {
+  id: -1,
+  chat: {
+    type: "simplex",
+    id: -1,
+    accesses: [
+      {
+        id: 0,
+        user: {
+          id: 0,
+          name: "SimpleX",
+        },
+      },
+    ],
+  },
+};
 
-  const [chats, setChats] = useState<IChat[]>([]);
+const supportChat: RootRoomAccess = {
+  id: -2,
+  chat: {
+    type: "support",
+    id: -2,
+    accesses: [
+      {
+        id: 0,
+        user: {
+          id: 0,
+          name: "Поддержка",
+        },
+      },
+    ],
+  },
+};
+
+interface SystemMessageParams {
+  createdAt: string;
+  name: string;
+}
+
+const simplexMessage: (params: SystemMessageParams) => IncomingMessage = (params) => ({
+  message: `${params.name}, добро пожаловать на Playerok!\n\nТеперь вы можете:\n1. Купить товар\n2. Выставить свой товар на продажу\n\nЕсли будут вопросы, напишите нам в поддержку`,
+  createdAt: params.createdAt,
+  name: "SimpleX",
+  userId: 0,
+  roomId: -1,
+  delivered: true,
+});
+
+const supportMessage: (params: Pick<SystemMessageParams, "createdAt">) => IncomingMessage = (params) => ({
+  message: "Задать вопрос",
+  createdAt: params.createdAt,
+  name: "Поддержка",
+  userId: 0,
+  roomId: -2,
+  delivered: true,
+});
+
+export default function Chat() {
+  const { id, login, name, createdAt } = useAppSelector((state) => state.user);
+
+  const token = getCookie("simple-token");
+  const dispatch = useAppDispatch();
+
+  if (!token) {
+    dispatch(actionLoginTrue());
+  }
+
+  const [chats, setChats] = useState<RootRoomAccess[]>([simplexChat, supportChat]);
   const [activeChatId, setActiveChatId] = useState<number>(null);
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [lastPong, setLastPong] = useState(null);
@@ -74,7 +143,7 @@ export default function Chat() {
   const getChats = async () => {
     const res = await axiosQuery({ url: "/chat-rooms" });
     console.log(res.data);
-    setChats(res.data);
+    setChats((prev) => [...prev, ...res.data]);
   };
 
   const dummyRef: MutableRefObject<HTMLDivElement> = useRef();
@@ -113,7 +182,7 @@ export default function Chat() {
         });
         // console.log(initialMessages);
         // if (!fetchedMessages.length) setStartReached((prev) => !prev);
-        setMessages([...fetchedMessages]);
+        setMessages([simplexMessage({ createdAt, name: login }), supportMessage({ createdAt }), ...fetchedMessages]);
         // console.log(messages);
         setScrollPage((prev) => prev + 1);
       } catch (e) {
@@ -123,8 +192,10 @@ export default function Chat() {
   };
 
   useEffect(() => {
-    getChats();
-  }, []);
+    if (id) {
+      getChats();
+    }
+  }, [id]);
 
   useEffect(() => {
     if (chats.length) {
@@ -194,7 +265,7 @@ export default function Chat() {
 
       socket.emit(
         "joinRoom",
-        chats.map((item) => item.id),
+        chats.map((item) => item.chat.id),
         id
       );
 
@@ -213,7 +284,7 @@ export default function Chat() {
       return () => {
         socket.emit(
           "leaveRoom",
-          chats.map((item) => item.id),
+          chats.map((item) => item.chat.id),
           id
         );
         socket.off("connect");
@@ -246,29 +317,64 @@ export default function Chat() {
               <div className='chat-sidebar h-100 overflow-hidden'>
                 <div className='d-flex flex-column h-100'>
                   <div className='chat-persons-list overflow-auto'>
-                    {chats.length && <ChatList chats={chats} setActiveChatId={setActiveChatId} users={users} messages={messages} />}
+                    <></>
+                    {chats.length && (
+                      <ChatList
+                        chats={chats.map((item) => item.chat)}
+                        setActiveChatId={setActiveChatId}
+                        users={users}
+                        messages={messages}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
 
               {!!activeChatId ? (
-                <ActiveChat
-                  socket={socket}
-                  isConnected={isConnected}
-                  startReached={startReached}
-                  setStartReached={setStartReached}
-                  scrollPage={scrollPage}
-                  setScrollPage={setScrollPage}
-                  activeChatId={activeChatId}
-                  messages={messages}
-                  setMessages={setMessages}
-                  setActiveChatId={setActiveChatId}
-                  chats={chats}
-                  users={users}
-                  scrollToBottom={scrollToBottom}
-                  userTimeRecords={userTimeRecords}
-                  ref={dummyRef}
-                />
+                !chats.find((item) => item.chat.id === activeChatId).chat.type ? (
+                  <ActiveChat
+                    socket={socket}
+                    isConnected={isConnected}
+                    startReached={startReached}
+                    setStartReached={setStartReached}
+                    scrollPage={scrollPage}
+                    setScrollPage={setScrollPage}
+                    activeChatId={activeChatId}
+                    messages={messages}
+                    setMessages={setMessages}
+                    setActiveChatId={setActiveChatId}
+                    chats={chats.map((item) => item.chat)}
+                    users={users}
+                    scrollToBottom={scrollToBottom}
+                    userTimeRecords={userTimeRecords}
+                    ref={dummyRef}
+                  />
+                ) : chats.find((item) => item.chat.id === activeChatId).chat.type === "simplex" ? (
+                  <SimplexChat
+                    activeChatId={activeChatId}
+                    messages={messages}
+                    setActiveChatId={setActiveChatId}
+                    chats={chats.map((item) => item.chat)}
+                    users={users}
+                    userTimeRecords={userTimeRecords}
+                  />
+                ) : (
+                  <SupportChat
+                    startReached={startReached}
+                    setStartReached={setStartReached}
+                    scrollPage={scrollPage}
+                    setScrollPage={setScrollPage}
+                    activeChatId={activeChatId}
+                    messages={messages}
+                    setMessages={setMessages}
+                    setActiveChatId={setActiveChatId}
+                    chats={chats.map((item) => item.chat)}
+                    users={users}
+                    scrollToBottom={scrollToBottom}
+                    userTimeRecords={userTimeRecords}
+                    ref={dummyRef}
+                  />
+                )
               ) : (
                 width > 1024 && <div className='empty_chat'>Выберите диалог для переписки</div>
               )}

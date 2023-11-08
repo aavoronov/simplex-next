@@ -6,7 +6,7 @@ export default function FriendInvite({ sum }: { sum: number }) {
     <div className='friend-invite'>
       <div className='friend-invite_head d-flex align-items-center justify-content-between'>
         <div className='prod-page-title m-0'>Пригласить друга</div>
-        <Link className='friend-invite-info_link' href=''>
+        <Link className='friend-invite-info_link' href='/profile/invite'>
           Подробнее
         </Link>
       </div>

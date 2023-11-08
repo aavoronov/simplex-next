@@ -26,7 +26,7 @@ export default function FilterHome() {
 
   return (
     <div className='filter-wrapper d-flex align-items-center'>
-      <Catalog />
+      <Catalog cats={cats} />
       <div className='filters-horizontal_items'>
         <ScrollContainer className='filters_scroll d-flex align-items-center'>
           {cats.map((value, i) => (

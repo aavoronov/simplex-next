@@ -35,6 +35,14 @@ const ChatMessage = ({
 
   // console.log(message.createdAt);
 
+  const MessageText = ({ message }: { message: string }) => {
+    const linesArray = message.split("\n");
+    console.log(linesArray);
+
+    const msg = linesArray.map((line) => (line ? <p style={{ marginBottom: 0 }}>{line}</p> : <br />));
+    return msg;
+  };
+
   return (
     <div className={container}>
       <div className='msg-body'>
@@ -44,7 +52,9 @@ const ChatMessage = ({
               <img className='w-100' src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/chat/${item}`} alt='' />
             </Zoom>
           ))}
-        <div className='msg-text'>{message.message}</div>
+        <div className='msg-text'>
+          <MessageText message={message.message} />
+        </div>
         <div className='msg-info d-flex align-items-center justify-content-end'>
           <span className='msg-check'>
             {isMine && (

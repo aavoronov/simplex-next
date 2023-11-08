@@ -102,7 +102,7 @@ export default function LeftMenu() {
             <span className='left-menu-item_name'>Приложения</span>
           </Link>
         </li>
-        <li>
+        {/* <li>
           <Link className={`left-menu-item d-flex align-items-center ${asPath === "/best" ? " active gradient" : ""}`} href='/best'>
             <span className='left-menu-item_icon'>
               <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none'>
@@ -121,7 +121,7 @@ export default function LeftMenu() {
             </span>
             <span className='left-menu-item_name'>Лучшие</span>
           </Link>
-        </li>
+        </li> */}
         <li>
           <Link className={`left-menu-item d-flex align-items-center${asPath === "/chat" ? " active gradient" : ""}`} href='/chat'>
             <span className='left-menu-item_icon'>

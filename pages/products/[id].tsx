@@ -11,6 +11,9 @@ import FriendInvite from "@/components/friendInvite";
 import ProductItem from "@/components/productItem";
 import { GetStaticPaths } from "next";
 import { axiosQuery, getPreciseAverage, getPrettyAge } from "@/utilities/utilities";
+import { actionPayment } from "@/store/actions/modal";
+import { useAppDispatch } from "@/utilities/hooks";
+import Payment from "@/components/modals/payment";
 
 export interface Review {
   id: number;
@@ -19,8 +22,7 @@ export interface Review {
   createdAt: string;
   user: {
     id: number;
-    name?: string;
-    login: string;
+    name: string;
     profilePic?: string;
   };
 }
@@ -51,8 +53,7 @@ interface DataType {
   };
   user: {
     id: number;
-    name?: string;
-    login: string;
+    name: string;
     isBlocked: boolean;
     createdAt: string;
     average: string;
@@ -86,6 +87,7 @@ const ProductProperties = ({ properties }: { properties: Record<string, string> 
 
 export default function Product({ data }: { data: DataType }) {
   const { width } = useWindowSize();
+  const dispatch = useAppDispatch();
 
   const productsWithReviews: ProductWithReviews[] = data.product.user.products;
   // const reviews = data.product.user.products;
@@ -95,7 +97,7 @@ export default function Product({ data }: { data: DataType }) {
     <MainLayout title={"Roblox"}>
       <div className='content-column product_sold-out'>
         <div className='container'>
-          <Breadcrumbs />
+          <Breadcrumbs currentCrumbs={[data.product.name]} />
           {data.product.status === "sold" && (
             <div className='sold-out-disclaimer d-flex align-items-center justify-content-center text-center w-100'>Продан</div>
           )}
@@ -124,7 +126,11 @@ export default function Product({ data }: { data: DataType }) {
                   <div className='votes-count'>{data.user.count} отзывов</div>
                 </div>
               </div>
-              <button className='btn btn_buy gradient d-flex align-items-center justify-content-center w-100'>Купить</button>
+              <button
+                className='btn btn_buy gradient d-flex align-items-center justify-content-center w-100'
+                onClick={() => dispatch(actionPayment())}>
+                Купить
+              </button>
               <div className='product-right-text'>После покупки будет доступен чат с продавцом</div>
               <Link className='product-right-link d-flex' href=''>
                 Гарантия Simple
@@ -148,7 +154,7 @@ export default function Product({ data }: { data: DataType }) {
                   {/* <div className='online-check position-absolute'></div> */}
                 </div>
                 <div className='seller-info position-relative'>
-                  <div className='seller-name'>{data.user.login}</div>
+                  <div className='seller-name'>{data.user.name}</div>
                   <div className='seller-raiting'>
                     <div className='item-raiting d-flex align-items-center'>
                       <div className='item-raiting_num'>{getPreciseAverage(data.user.average)}</div>
@@ -161,12 +167,12 @@ export default function Product({ data }: { data: DataType }) {
                 </div>
               </div>
               <div className='seller-achievements'>
-                <div className='achiev-item d-flex align-items-center'>
+                {/* <div className='achiev-item d-flex align-items-center'>
                   <span className='achiev-icon'>
                     <img src='../images/achiv.svg' alt='' />
                   </span>
                   <span className='achiev-text'>Скорость ответа: не более 1 часа</span>
-                </div>
+                </div> */}
                 <div className='achiev-item d-flex align-items-center'>
                   <span className='achiev-icon'>
                     <img src='../images/achiv.svg' alt='' />
@@ -231,9 +237,16 @@ export default function Product({ data }: { data: DataType }) {
           </div>
           <div className='product-reviews'>
             <div className='product-reviews-head d-flex align-items-center justify-content-between'>
-              <div className='prod-page-title'>Отзывы о {data.user.login}</div>
+              <div className='prod-page-title'>Отзывы о {data.user.name}</div>
               {width >= 768 ? (
-                <Link className='btn_all-reviews d-flex position-relative' href=''>
+                <Link
+                  className='btn_all-reviews d-flex position-relative'
+                  href={{
+                    pathname: `/reviews/[id]`,
+                    query: {
+                      id: data.user.id, // pass the id
+                    },
+                  }}>
                   Все отзывы ({data.user.count})
                 </Link>
               ) : (
@@ -337,6 +350,7 @@ export default function Product({ data }: { data: DataType }) {
           </div>
         </div>
       </div>
+      <Payment product={data.product} />
     </MainLayout>
   );
 }
@@ -356,5 +370,6 @@ export async function getStaticProps(context) {
   console.log(res.data);
   return {
     props: { data: res.data }, // will be passed to the page component as props
+    revalidate: 60,
   };
 }

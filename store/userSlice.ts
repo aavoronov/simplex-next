@@ -6,6 +6,8 @@ interface UserState {
   role: string;
   name: string;
   profilePic?: string;
+  inviteToken: string;
+  createdAt: string;
 }
 
 const initialState: UserState = {
@@ -13,6 +15,8 @@ const initialState: UserState = {
   login: "",
   role: "",
   name: "",
+  inviteToken: "",
+  createdAt: "",
 };
 
 const userSlice = createSlice({

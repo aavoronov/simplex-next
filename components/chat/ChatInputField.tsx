@@ -1,4 +1,4 @@
-import { OutgoingMessage } from "@/pages/chat";
+import { IncomingMessage, OutgoingMessage } from "@/pages/chat";
 import { useAppSelector } from "@/utilities/hooks";
 import { SetState } from "@/utilities/utilities";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
@@ -11,12 +11,14 @@ interface DropzoneFile extends File {
 }
 
 interface Props {
-  socket: Socket;
+  socket: Socket | null;
   activeChatId: number;
   isConnected: boolean;
+  setMessages?: SetState<any[]>;
 }
 
-const ChatInputField = ({ socket, activeChatId, isConnected }: Props) => {
+const ChatInputField = ({ socket, activeChatId, isConnected, setMessages }: Props) => {
+  const isSupport = !socket;
   const [isDraggedOver, setIsDraggedOver] = useState(false);
   const [chatTextValue, setChatTextValue] = useState("");
   // const [scrollPosition, setScrollPosition] = useState(0);
@@ -42,6 +44,25 @@ const ChatInputField = ({ socket, activeChatId, isConnected }: Props) => {
     }
   };
 
+  const sendSupportMessage = (payload: OutgoingMessage) => {
+    console.log(payload);
+
+    const incomingMsg: IncomingMessage = {
+      message: payload.text,
+      createdAt: new Date().toLocaleDateString(),
+      name: "you",
+      userId: 0,
+      roomId: -2,
+      delivered: true,
+      // files: payload.files
+    };
+    setMessages((prev) => [...prev, incomingMsg]);
+    setChatTextValue("");
+    setFiles([]);
+  };
+
+  const handleSend = isSupport ? sendSupportMessage : sendMessage;
+
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       if (event.shiftKey) {
@@ -49,9 +70,8 @@ const ChatInputField = ({ socket, activeChatId, isConnected }: Props) => {
       } else {
         event.preventDefault();
         (chatTextValue || files.length) &&
-          sendMessage({
+          handleSend({
             login: login,
-            name: name,
             text: chatTextValue,
             userId: id,
             roomId: activeChatId,
@@ -152,17 +172,16 @@ const ChatInputField = ({ socket, activeChatId, isConnected }: Props) => {
           <button
             className='btn btn_send-message position-absolute end-0 top-0 bottom-0'
             onClick={() => {
-              console.log(chatTextValue);
-              (chatTextValue || files.length) &&
-                sendMessage({
-                  login: login,
-                  name: name,
-                  text: chatTextValue,
-                  userId: id,
-                  // profilePic: profilePic,
-                  // filename,
-                  roomId: activeChatId,
-                });
+              if (!chatTextValue && !files.length) return;
+
+              handleSend({
+                login: login,
+                text: chatTextValue,
+                userId: id,
+                // profilePic: profilePic,
+                // filename,
+                roomId: activeChatId,
+              });
             }}>
             <svg xmlns='http://www.w3.org/2000/svg' width='21' height='21' viewBox='0 0 21 21' fill='none'>
               <path d='M1 10L20 1L11 20L9 12L1 10Z' stroke='#18130C' strokeWidth='1.5' strokeLinecap='round' strokeLinejoin='round' />
@@ -186,33 +205,3 @@ const ChatInputField = ({ socket, activeChatId, isConnected }: Props) => {
 };
 
 export default ChatInputField;
-
-// const Comp = () => {
-//   <div className={styles.dragndropWrap}>
-//     {/* <div {...getRootProps({ className: isDraggedOver ? styles.hoveredOver : "" })}> */}
-//     <div className={isDraggedOver ? styles.hoveredOver : ""}>
-//       {!files.length && <input {...getInputProps()} className={styles.paperclipBtn} ref={hiddenFileInput} />}
-//       {!files.length && <button className={styles.paperclipBtn} onClick={() => hiddenFileInput.current.click()}></button>}
-
-//       <div style={{ display: "flex", flexDirection: "row" }}>
-//         {" "}
-//         <textarea
-//           className={
-//             isDraggedOver
-//               ? styles.chatField + " " + styles.dragndropField + " " + styles.hoveredOver
-//               : styles.chatField + " " + styles.dragndropField
-//           }
-//           placeholder={!pseudonym ? "Введите свой псевдоним в личном кабинете, чтобы отправлять сообщения" : ""}
-//           readOnly={!pseudonym}
-//           style={{ boxShadow: "none" }}
-//           value={chatTextValue}
-//           onChange={(event) => setChatTextValue(event.target.value)}
-//           onKeyPress={handleKeyPress}
-//         />{" "}
-//         <ScrollContainer className='scroll-container d-flex flex-nowrap align-items-center list-none' horizontal vertical={false}>
-//           {thumbs}
-//         </ScrollContainer>
-//       </div>
-//     </div>
-//   </div>;
-// };

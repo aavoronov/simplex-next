@@ -2,11 +2,17 @@ import React, { useState } from "react";
 import Modal from "react-modal";
 import { useAppSelector, useAppDispatch } from "@/utilities/hooks";
 import { actionPublished } from "../../store/actions/modal";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 export default function PublishedModal() {
   const publishedModal = useAppSelector((state) => state.modalPublished);
   const dispatch = useAppDispatch();
-  const publishedModalAction = () => dispatch(actionPublished());
+  const router = useRouter();
+  const publishedModalAction = () => {
+    dispatch(actionPublished());
+    router.replace("/");
+  };
 
   return (
     <>
@@ -32,7 +38,9 @@ export default function PublishedModal() {
         </button>
         <div className='modal-published-title text-center'>Ваш товар успешно опубликован</div>
         <div className='modal-published-text w-100 mx-auto text-center'>Проследить можно в личном кабинете</div>
-        <button className='btn btn_submit btn_submit-green'>В личный кабинет</button>
+        <Link href='/profile' className='btn btn_submit btn_submit-green'>
+          В личный кабинет
+        </Link>
       </Modal>
     </>
   );

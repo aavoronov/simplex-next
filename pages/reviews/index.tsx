@@ -1,42 +1,155 @@
 import React, { useEffect, useRef, useState } from "react";
-import { MainLayout } from "../layouts/MainLayout";
+import { MainLayout } from "../../layouts/MainLayout";
 import ScrollContainer from "react-indiana-drag-scroll";
 
 import Breadcrumbs from "@/components/breadcrumbs";
 import Pagination from "@/components/pagination";
-import ReviewsCard from "@/components/reviews/reviewsCard";
 import BtnSort from "@/components/btnSort";
-import { axiosQuery } from "@/utilities/utilities";
+import { axiosQuery, currentDatetime, getPreciseAverage } from "@/utilities/utilities";
+import { GetStaticPaths } from "next";
+import Link from "next/link";
 
-export default function Reviews() {
+const ReviewsCard = ({ review }: { review: Review }) => {
+  return (
+    <div className='reviews-item d-flex flex-column'>
+      <div className='reviews-item_head d-flex justify-content-between'>
+        <div className='buyer-card d-flex'>
+          <div className='buyer-ava'>
+            {review.user.profilePic ? (
+              <img className='w-100 h-100' src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/users/${review.user.profilePic}`} alt='' />
+            ) : (
+              <img className='w-100 h-100' src='../images/anonymous.png' alt='' />
+            )}
+          </div>
+          <div className='buyer-info'>
+            <div className='buyer-name'>{review.user.name}</div>
+            <div className='buyer-stars'>
+              <svg xmlns='http://www.w3.org/2000/svg' width='66' height='10' fill='none'>
+                <path
+                  fill='url(#a1)'
+                  d='M9.93 3.704a1.368 1.368 0 0 0-.486-.698 1.296 1.296 0 0 0-.792-.26H6.83L6.278.965a1.388 1.388 0 0 0-.488-.7 1.316 1.316 0 0 0-1.585 0c-.23.174-.401.419-.488.7l-.553 1.78H1.343c-.284 0-.56.093-.789.265-.23.172-.4.415-.488.693a1.433 1.433 0 0 0-.001.857c.087.279.257.522.486.695l1.482 1.119-.563 1.802a1.41 1.41 0 0 0-.004.863c.09.28.263.523.497.693a1.296 1.296 0 0 0 1.584-.009l1.45-1.102 1.451 1.101a1.316 1.316 0 0 0 1.583.008c.231-.172.403-.415.492-.694.089-.279.09-.58.002-.86l-.563-1.802 1.483-1.12c.232-.17.404-.413.491-.692a1.41 1.41 0 0 0-.006-.86Z'
+                />
+                <path
+                  fill='url(#b)'
+                  d='M23.93 3.704a1.368 1.368 0 0 0-.486-.698 1.297 1.297 0 0 0-.792-.26H20.83l-.553-1.78a1.389 1.389 0 0 0-.488-.7 1.316 1.316 0 0 0-1.585 0c-.23.174-.401.419-.488.7l-.553 1.78h-1.821c-.284 0-.56.093-.789.265-.23.172-.4.415-.488.693a1.433 1.433 0 0 0-.001.857c.087.279.257.522.486.695l1.482 1.119-.563 1.802a1.41 1.41 0 0 0-.004.863c.09.28.264.523.497.693a1.296 1.296 0 0 0 1.584-.009l1.45-1.102 1.451 1.101a1.316 1.316 0 0 0 1.583.008c.231-.172.403-.415.492-.694.089-.279.09-.58.002-.86l-.563-1.802 1.483-1.12c.232-.17.404-.413.491-.692a1.41 1.41 0 0 0-.006-.86Z'
+                />
+                <path
+                  fill='url(#c)'
+                  d='M37.93 3.704a1.368 1.368 0 0 0-.486-.698 1.297 1.297 0 0 0-.792-.26H34.83l-.553-1.78a1.389 1.389 0 0 0-.488-.7 1.316 1.316 0 0 0-1.585 0c-.23.174-.401.419-.488.7l-.553 1.78h-1.821c-.284 0-.56.093-.789.265-.23.172-.4.415-.488.693a1.433 1.433 0 0 0-.001.857c.087.279.257.522.486.695l1.482 1.119-.563 1.802a1.41 1.41 0 0 0-.004.863c.09.28.264.523.497.693a1.296 1.296 0 0 0 1.584-.009l1.45-1.102 1.451 1.101a1.316 1.316 0 0 0 1.583.008c.231-.172.403-.415.492-.694.089-.279.09-.58.002-.86l-.563-1.802 1.483-1.12c.232-.17.404-.413.491-.692a1.41 1.41 0 0 0-.006-.86Z'
+                />
+                <path
+                  fill='url(#d)'
+                  d='M51.93 3.704a1.368 1.368 0 0 0-.486-.698 1.297 1.297 0 0 0-.792-.26H48.83l-.553-1.78a1.389 1.389 0 0 0-.488-.7 1.316 1.316 0 0 0-1.585 0c-.23.174-.401.419-.488.7l-.553 1.78h-1.821c-.284 0-.56.093-.789.265-.23.172-.4.415-.488.693a1.433 1.433 0 0 0-.001.857c.087.279.257.522.486.695l1.482 1.119-.563 1.802a1.41 1.41 0 0 0-.004.863c.09.28.264.523.497.693a1.296 1.296 0 0 0 1.584-.009l1.45-1.102 1.451 1.101a1.316 1.316 0 0 0 1.583.008c.231-.172.403-.415.492-.694.089-.279.09-.58.002-.86l-.563-1.802 1.483-1.12c.232-.17.404-.413.491-.692a1.41 1.41 0 0 0-.006-.86Z'
+                />
+                <path
+                  fill='#BDBDBD'
+                  d='M65.93 3.704a1.368 1.368 0 0 0-.486-.698 1.297 1.297 0 0 0-.792-.26H62.83l-.553-1.78a1.389 1.389 0 0 0-.488-.7 1.316 1.316 0 0 0-1.585 0c-.23.174-.401.419-.488.7l-.553 1.78h-1.821c-.284 0-.56.093-.789.265-.23.172-.4.415-.488.693a1.433 1.433 0 0 0-.001.857c.087.279.257.522.486.695l1.482 1.119-.563 1.802a1.41 1.41 0 0 0-.004.863c.09.28.264.523.497.693a1.296 1.296 0 0 0 1.584-.009l1.45-1.102 1.451 1.101a1.316 1.316 0 0 0 1.583.008c.231-.172.403-.415.492-.694.089-.279.09-.58.002-.86l-.563-1.802 1.483-1.12c.232-.17.404-.413.491-.692a1.41 1.41 0 0 0-.006-.86Z'
+                />
+                <defs>
+                  <linearGradient id='a1' x1='5' x2='11.943' y1='0' y2='1.607' gradientUnits='userSpaceOnUse'>
+                    <stop stopColor='#FE6546' />
+                    <stop offset='1' stopColor='#FF9E0D' />
+                  </linearGradient>
+                  <linearGradient id='b' x1='19' x2='25.943' y1='0' y2='1.607' gradientUnits='userSpaceOnUse'>
+                    <stop stopColor='#FE6546' />
+                    <stop offset='1' stopColor='#FF9E0D' />
+                  </linearGradient>
+                  <linearGradient id='c' x1='33' x2='39.943' y1='0' y2='1.607' gradientUnits='userSpaceOnUse'>
+                    <stop stopColor='#FE6546' />
+                    <stop offset='1' stopColor='#FF9E0D' />
+                  </linearGradient>
+                  <linearGradient id='d' x1='47' x2='53.943' y1='0' y2='1.607' gradientUnits='userSpaceOnUse'>
+                    <stop stopColor='#FE6546' />
+                    <stop offset='1' stopColor='#FF9E0D' />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div className='review-date'>{currentDatetime(review.createdAt)}</div>
+      </div>
+
+      <div className='reviews-item-content'>
+        {!!review.text && (
+          <>
+            <div className='reviews-item-title'>Комментарий</div>
+            <div className='reviews-item-text'>{review.text}</div>
+          </>
+        )}
+      </div>
+
+      <Link
+        href={`/product/${review.products.id}`}
+        className='reviews-item-product d-flex align-items-center justify-content-between w-100'>
+        <div className='reviews-item-product-image'>
+          <img className='w-100 h-100' src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/products/${review.products.pics[0]}`} alt='' />
+        </div>
+        <div className='reviews-item-product-info'>
+          <div className='product-item-price d-flex align-items-center'>
+            {/* <div className={`current-price ${props.num < 5 && "_sale"}`}>369 ₽</div>
+            {props.num < 5 && (
+              <>
+                <div className='discount gradient d-flex align-items-center justify-content-center'>-14%</div>
+                <div className='old-price'>429</div>
+              </>
+            )} */}
+          </div>
+          <div className='reviews-item-product-name position-relative'>{review.products.name}</div>
+        </div>
+      </Link>
+    </div>
+  );
+};
+
+interface Review {
+  text: string;
+  rating: number;
+  createdAt: string;
+  products: {
+    id: number;
+    name: string;
+    pics: string[];
+  };
+  user: {
+    name: string;
+    profilePic: any;
+  };
+}
+
+interface Stats {
+  average: string;
+  count: string;
+}
+
+export default function Reviews({ data, stats }: { data: Review[]; stats: Stats }) {
   const filters = ["Игры", "Категория", "С текстом", "Цена"];
-  // const reviews = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
-  const [reviews, setReviews] = useState([]);
-  const [page, setPage] = useState(1);
+  const [reviews, setReviews] = useState(data);
+  const [page, setPage] = useState(2);
   const [endReached, setEndReached] = useState(false);
 
   const getReviews = async (page) => {
-    const res = await axiosQuery({ url: `/reviews/my?page=${page}` });
+    const res = await axiosQuery({ url: `/reviews?page=${page}` });
     setReviews((prev) => [...prev, ...res.data]);
     console.log(res.data);
     setPage((prev) => prev + 1);
     if (!res.data.length) setEndReached(true);
   };
 
-  useEffect(() => {
-    getReviews(page);
-  }, []);
+  // useEffect(() => {
+  //   getReviews(page);
+  // }, []);
 
   return (
     <MainLayout title={"Roblox"}>
       <div className='content-column'>
         <div className='container'>
-          <Breadcrumbs />
+          <Breadcrumbs currentCrumbs={["Отзывы"]} />
 
           <div className='reviews-page'>
             <div className='all-reviews-card d-flex align-items-center'>
-              <div className='all-reviews_raiting'>5.0</div>
+              <div className='all-reviews_raiting'>{getPreciseAverage(stats.average)}</div>
               <div className='all-reviews-info'>
                 <div className='all-reviews-stars'>
                   <svg width='105' height='18' viewBox='0 0 105 18' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -108,7 +221,7 @@ export default function Reviews() {
                     </defs>
                   </svg>
                 </div>
-                <div className='all-reviews-count'>649 отзывов</div>
+                <div className='all-reviews-count'>{stats.count} отзывов</div>
               </div>
             </div>
             <div className='product-reviews-desc'>Все отзывы оставлены после покупки товаров</div>
@@ -140,14 +253,23 @@ export default function Reviews() {
             </div>
             <div className='reviews-content d-grid'>
               {reviews.map((value, i) => (
-                // <ReviewsCard product={value} />
-                <span>{value.id}</span>
+                <ReviewsCard review={value} key={i} />
+                // <span>{value.id}</span>
               ))}
             </div>
-            {!endReached && <Pagination />}
+            {!endReached && <Pagination onClick={() => getReviews(page)} />}
           </div>
         </div>
       </div>
     </MainLayout>
   );
+}
+
+export async function getServerSideProps() {
+  const res = await axiosQuery({ url: `/reviews/` });
+  const stats = await axiosQuery({ url: `/reviews/stats` });
+  // console.log(res.data);
+  return {
+    props: { data: res.data, stats: stats.data }, // will be passed to the page component as props
+  };
 }

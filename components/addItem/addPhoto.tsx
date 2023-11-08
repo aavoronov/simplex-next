@@ -9,14 +9,14 @@ import "swiper/css/navigation";
 import { Pagination, Navigation } from "swiper/modules";
 
 import Dropzone from "react-dropzone-uploader";
+import { SetState } from "@/utilities/utilities";
+import { Image } from "@/pages/sell";
 
-export const AddPhoto = () => {
+export const AddPhoto = ({ imagesArray, setImagesArray }: { imagesArray: Image[]; setImagesArray: SetState<Image[]> }) => {
   const [swiperRef, setSwiperRef] = useState(null);
 
   const navigationPrevRef = React.useRef(null);
   const navigationNextRef = React.useRef(null);
-
-  const [imagesArray, setImagesArray] = useState([]);
 
   const inputRef = useRef();
 
@@ -30,9 +30,9 @@ export const AddPhoto = () => {
 
   // called every time a file's `status` changes
   const handleAddPreview = ({ meta, file }, status) => {
-    console.log(file);
+    // console.log(file);
     if (status == "done") {
-      setImagesArray([...imagesArray, meta.previewUrl]);
+      setImagesArray((prev) => [...prev, { file, preview: meta.previewUrl }]);
       setTimeout(() => {
         swiperRef.slideTo(imagesArray.length, 0);
       }, 0.1);
@@ -85,20 +85,13 @@ export const AddPhoto = () => {
         }}
         modules={[Pagination, Navigation]}
         className='addPhotoSwiper'>
-        {imagesArray &&
-          imagesArray.map((el, i) => (
-            <SwiperSlide key={i}>
-              <img src={el} alt='' />
-            </SwiperSlide>
-          ))}
+        {imagesArray.map((el, i) => (
+          <SwiperSlide key={i}>
+            <img src={el.preview} alt='' onClick={() => console.log(imagesArray)} />
+          </SwiperSlide>
+        ))}
         <SwiperSlide>
-          <Dropzone
-            className='position-absolute start-0 end-0 top-0 bottom-0'
-            onChangeStatus={handleAddPreview}
-            PreviewComponent={Preview}
-            accept='image/*,audio/*,video/*'
-            InputComponent={Input}
-          />
+          <Dropzone onChangeStatus={handleAddPreview} PreviewComponent={Preview} accept='image/*' InputComponent={Input} />
         </SwiperSlide>
       </Swiper>
       <div

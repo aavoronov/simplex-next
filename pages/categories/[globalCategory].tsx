@@ -24,6 +24,10 @@ export interface App {
   app: {
     id: number;
     name: string;
+    miniPic: string;
+  };
+  globalCategory: {
+    name: string;
   };
 }
 
@@ -34,7 +38,7 @@ interface Product {
   price: string;
 }
 
-export default function GlobalCategory({ globalCategory }: { globalCategory: number }) {
+export default function GlobalCategory({ globalCategory, name }: { globalCategory: number; name: string }) {
   const [apps, setApps] = useState<App[]>([]);
   const [products, setProducts] = useState<ProductThumbnail[]>([]);
 
@@ -54,7 +58,7 @@ export default function GlobalCategory({ globalCategory }: { globalCategory: num
       <>
         <div className='content-column'>
           <div className='container'>
-            <Breadcrumbs />
+            {!!apps.length && <Breadcrumbs currentCrumbs={[apps[0].globalCategory.name]} />}
 
             <TopDownloads title='Игры' data={apps} />
 
@@ -93,5 +97,6 @@ export async function getStaticProps(context) {
   return {
     // props: { initialApps: res.data, type: context.params.type }, // will be passed to the page component as props
     props: { globalCategory: context.params.globalCategory },
+    revalidate: 60,
   };
 }

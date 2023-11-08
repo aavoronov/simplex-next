@@ -3,7 +3,7 @@ import { MainLayout } from "../../layouts/MainLayout";
 import Link from "next/link";
 import ScrollContainer from "react-indiana-drag-scroll";
 import Pagination from "@/components/pagination";
-import Breadcrumbs from "@/components/breadcrumbs";
+import Breadcrumbs, { crumbs } from "@/components/breadcrumbs";
 import ProductItem from "@/components/productItem";
 // import Filter from "@/components/modals/filter";
 import { useAppDispatch, useAppSelector } from "@/utilities/hooks";
@@ -296,7 +296,7 @@ export default function Catalog({ app }: { app: number }) {
 
   const getData = async (id: number) => {
     const res = await axiosQuery({ url: `/apps/${id}` });
-    setData({ pagePic: res.data.pagePic });
+    setData({ pagePic: res.data.pagePic, isGame: res.data.isGame, name: res.data.name });
     console.log(res.data);
     setCategories(res.data.categories);
     setActiveCategory(res.data.categories[0]);
@@ -339,7 +339,7 @@ export default function Catalog({ app }: { app: number }) {
       <>
         <div className='content-column'>
           <div className='container'>
-            <Breadcrumbs />
+            {data?.name && <Breadcrumbs currentCrumbs={[data.isGame ? crumbs.games : crumbs.apps, data.name]} />}
             <div className='catalog-banner'>
               {!!data && <img src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/apps/${data.pagePic}`} className='w-100 h-100' alt='' />}
             </div>
@@ -434,5 +434,6 @@ export async function getStaticProps(context) {
   return {
     // props: { initialApps: res.data, type: context.params.type }, // will be passed to the page component as props
     props: { app: context.params.app },
+    revalidate: 60,
   };
 }

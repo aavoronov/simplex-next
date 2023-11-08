@@ -9,8 +9,6 @@ import { useAppSelector } from "@/utilities/hooks";
 import ChatInputField from "./ChatInputField";
 
 interface Props {
-  socket: Socket;
-  isConnected: boolean;
   startReached: boolean;
   setStartReached: SetState<boolean>;
   scrollPage: number;
@@ -25,11 +23,9 @@ interface Props {
   userTimeRecords: { userId: number; time: string; chat: number }[];
 }
 
-const ActiveChat = forwardRef(
+const SupportChat = forwardRef(
   (
     {
-      socket,
-      isConnected,
       startReached,
       setStartReached,
       scrollPage,
@@ -53,29 +49,24 @@ const ActiveChat = forwardRef(
     const { width } = useWindowSize();
     const { login, profilePic } = useAppSelector((state) => state.user);
 
+    const bot = [
+      "Как купить?",
+      "Гарантии",
+      "Проблема с покупкой",
+      "Возврат",
+      "Как продать?",
+      "Вывод",
+      "Идеи и предложения",
+      "Технические проблемы",
+      "Летние скидки",
+      "Пригласи друга",
+    ];
+
     useEffect(() => {
       scrollToBottom();
     }, []);
 
-    const sendPing = () => {
-      if (!!login) {
-        socket.emit("ping", login, activeChatId);
-      }
-    };
     //
-    useEffect(() => {
-      sendPing();
-      const interval = setInterval(() => {
-        sendPing();
-      }, 1000 * 300);
-      return () => clearInterval(interval);
-      // setTimeout(sendPing, 10000);
-    }, [login, activeChatId]);
-
-    useEffect(() => {
-      console.log("ping on messages change");
-      sendPing();
-    }, [messages]);
 
     async function getMoreMessages() {
       if (!startReached) {
@@ -181,12 +172,23 @@ const ActiveChat = forwardRef(
                   );
                 });
             })()}
-
-            <div className='bot-menu d-flex align-items-center'></div>
+            <div className='date-bar text-center'>Ожидайте, ваш вопрос на рассмотрении. Мы ответим в ближайшее время</div>
+            <div className='bot-menu d-flex align-items-center'>
+              {bot.map((value, i) => (
+                <button
+                  key={i}
+                  className='btn btn_bot-item'
+                  onClick={() => {
+                    console.log(value);
+                  }}>
+                  {value}
+                </button>
+              ))}
+            </div>
             <div className='scroll-dummy' ref={ref}></div>
           </div>
           <div className='chat-footer w-100'>
-            <ChatInputField socket={socket} activeChatId={activeChatId} isConnected={isConnected} />
+            <ChatInputField socket={null} activeChatId={activeChatId} isConnected={true} setMessages={setMessages} />
           </div>
         </div>
       </div>
@@ -194,4 +196,4 @@ const ActiveChat = forwardRef(
   }
 );
 
-export default ActiveChat;
+export default SupportChat;

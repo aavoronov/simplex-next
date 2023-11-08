@@ -6,13 +6,21 @@ import { actionPayment } from "../../store/actions/modal";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
 import * as Yup from "yup";
+import { axiosQuery } from "@/utilities/utilities";
+import { toggle } from "@/store/notificationsSlice";
 
 let yup = require("yup");
 
-export default function Payment() {
+export default function Payment({ product }) {
   const paymentModal = useAppSelector((state) => state.modalPayment);
   const dispatch = useAppDispatch();
   const paymentModalAction = () => dispatch(actionPayment());
+
+  const handleSubmit = async () => {
+    const res = await axiosQuery({ url: `/purchases`, method: "post", payload: { productId: product.id } });
+    paymentModalAction();
+    dispatch(toggle({ text: "Куплено", type: "success" }));
+  };
 
   return (
     <>
@@ -44,7 +52,8 @@ export default function Payment() {
             amount: "",
             sale: "",
             reviews: "",
-          }}>
+          }}
+          onSubmit={handleSubmit}>
           {(props) => (
             <Form className='filter-form d-flex flex-column align-items-center w-100'>
               <div className='filter-header d-flex justify-content-center position-relative w-100'>
@@ -100,7 +109,7 @@ export default function Payment() {
               <div className='filter-footer d-flex justify-content-between'>
                 <div className='modal-pay-info w-100'>Для завершения оплаты Вы будете перемещены на сайт платежной системы</div>
                 <div className='modal-pay-price d-flex flex-column justify-content-between'>
-                  <div className='modal-pay-price-value'>825 ₽</div>
+                  <div className='modal-pay-price-value'>{product.price} ₽</div>
                   <div className='modal-pay-price-text'>Покупка</div>
                 </div>
                 <button className='btn btn_submit gradient d-flex align-items-center justify-content-center'>Оплатить</button>

@@ -62,12 +62,37 @@ export const getPrettyAge = (date: Date | string) => {
     const creationTime = typeof date === "object" ? date : new Date(Date.parse(date));
     const today = new Date();
 
-    const days = today.getDate() - creationTime.getDate();
-    const months = today.getMonth() - creationTime.getMonth();
+    const isLeapYear = (today: Date) => {
+      const year = today.getFullYear();
+      return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+    };
+
+    const getDaysInMonth = (today: Date) => {
+      const previousMonth = today.getMonth() - 1;
+      const daysInMonths = [31, [28, 29], 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+      if (previousMonth === -1) {
+        return daysInMonths[11];
+      }
+      if (previousMonth === 1) {
+        return isLeapYear(today) ? daysInMonths[1][1] : daysInMonths[1][0];
+      }
+      return daysInMonths[previousMonth];
+    };
+
+    let days = today.getDate() - creationTime.getDate();
+    let months = today.getMonth() - creationTime.getMonth();
     let years = today.getFullYear() - creationTime.getFullYear();
     if (months < 0 || (months === 0 && today.getDate() < creationTime.getDate())) {
       years--;
+      months = 12 + months;
     }
+
+    if (days < 0) {
+      days = getDaysInMonth(today) + days;
+      months--;
+    }
+
     return { days, months, years };
   };
 
@@ -80,7 +105,7 @@ export const getPrettyAge = (date: Date | string) => {
     return days === 0 || days === 1 ? "1 день" : `${days} ${root}${suffix}`;
   }
 
-  if (days < 30 && months === 0 && years === 0) {
+  if (months === 0 && years === 0) {
     return "менее месяца";
   }
 
@@ -88,7 +113,6 @@ export const getPrettyAge = (date: Date | string) => {
     const root = "месяц";
     const suffix = months < 5 ? "а" : "ев";
 
-    // return months === 1 ? "1 день" : `${months} ${root}${suffix}`;
     return `${months} ${root}${months > 1 ? suffix : ""}`;
   }
 
@@ -163,8 +187,6 @@ export class AxiosConfig {
 
 export const axiosQuery = async ({ method, url, noAuth, payload, onError }: AxiosConfigProps) => {
   try {
-    // const authorization = !noAuth ? await getCookie("simple-token") : void 0;
-    // const res = await axios(await axiosConfig({ method, url, noAuth, payload }));
     const res = await axios(AxiosConfig.createSync({ method, url, noAuth, payload }));
     return res;
   } catch (e) {

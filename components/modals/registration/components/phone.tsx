@@ -12,13 +12,13 @@ import { toggle } from "@/store/notificationsSlice";
 
 let yup = require("yup");
 
-export default function Phone() {
+export default function Phone({ invite }: { invite: string }) {
   const dispatch = useAppDispatch();
 
   const [phone, setPhone] = useState("");
 
   const signUp = async (phone: string) => {
-    const res = await axiosQuery({ url: "/users/phone", method: "post", payload: { phone } });
+    const res = await axiosQuery({ url: "/users/phone", method: "post", payload: { phone, invite } });
     console.log(res.data);
 
     if (res) {

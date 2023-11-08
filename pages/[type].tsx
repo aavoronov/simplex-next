@@ -3,7 +3,7 @@ import { MainLayout } from "../layouts/MainLayout";
 import Link from "next/link";
 import Pagination from "@/components/pagination";
 import TopDownloads from "@/components/topDownloads";
-import Breadcrumbs from "@/components/breadcrumbs";
+import Breadcrumbs, { crumbs } from "@/components/breadcrumbs";
 import { axiosQuery } from "@/utilities/utilities";
 import { GetStaticPaths } from "next";
 import { App } from "./index";
@@ -42,7 +42,7 @@ export default function Apps({ initialApps, type }: { initialApps: App[]; type: 
     <MainLayout title={type === "games" ? "Игры" : "Приложения"}>
       <div className='content-column'>
         <div className='container'>
-          <Breadcrumbs />
+          <Breadcrumbs currentCrumbs={[type === "games" ? crumbs.games : crumbs.apps]} />
           {/* <TopDownloads /> */}
           <div className='gaa-catalog d-grid'>
             {apps.map((item) => (
@@ -86,5 +86,6 @@ export async function getStaticProps(context) {
   const res = await axiosQuery({ url: `/apps?type=${context.params.type}&page=1` });
   return {
     props: { initialApps: res.data.rows, type: context.params.type }, // will be passed to the page component as props
+    revalidate: 60,
   };
 }

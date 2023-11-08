@@ -4,6 +4,9 @@ import ScrollContainer from "react-indiana-drag-scroll";
 import BtnSort from "../btnSort";
 import BtnDelete from "../btnDelete";
 import { axiosQuery, currentDatetime } from "@/utilities/utilities";
+import { useAppDispatch } from "@/utilities/hooks";
+import { actionReviewForm } from "@/store/actions/modal";
+import ReviewForm from "../modals/reviewForm";
 
 interface Purchase {
   id: number;
@@ -26,15 +29,24 @@ interface Purchase {
         miniPic: string;
       };
     };
+    reviews: { id: number }[];
   };
 }
 
 const Purchase = ({ purchase }: { purchase: Purchase }) => {
   const [status, setStatus] = useState(purchase.status);
+  const [reviewLeft, setReviewLeft] = useState(!!purchase.product.reviews.length);
+  const [reviewForm, setReviewForm] = useState(false);
+
+  const dispatch = useAppDispatch();
 
   const changePurchaseStatus = async (status: "completed" | "disputed") => {
     const res = await axiosQuery({ url: `/purchases/${purchase.id}`, method: "patch", payload: { status: status } });
     setStatus(status);
+  };
+
+  const toggleReviewForm = () => {
+    setReviewForm((prev) => !prev);
   };
 
   const Status = () => {
@@ -55,7 +67,22 @@ const Purchase = ({ purchase }: { purchase: Purchase }) => {
           </>
         );
       case "completed":
-        return <div className='item-tag gradient_green d-flex align-items-center justify-content-center mx-auto'>Подтвержден</div>;
+        return (
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
+            <div className='item-tag gradient_green d-flex align-items-center justify-content-center mx-auto'>Подтвержден</div>
+            <div
+              onClick={() => {
+                if (reviewLeft) return;
+                toggleReviewForm();
+              }}
+              style={{
+                cursor: reviewLeft ? "default" : "pointer",
+              }}
+              className='leave-review'>
+              {reviewLeft ? "Отзыв оставлен" : "Оставить отзыв"}
+            </div>
+          </div>
+        );
       case "disputed":
         return <div className='item-tag gradient d-flex align-items-center justify-content-center mx-auto'>Идет спор</div>;
       case "cancelled":
@@ -89,6 +116,9 @@ const Purchase = ({ purchase }: { purchase: Purchase }) => {
       <div className='history-table-item_status'>
         <Status />
       </div>
+      {reviewForm && (
+        <ReviewForm productId={purchase.product.id} onClose={() => setReviewForm(false)} onReviewCreated={() => setReviewLeft(true)} />
+      )}
     </div>
   );
 };

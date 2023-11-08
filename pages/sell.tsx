@@ -7,8 +7,11 @@ import Breadcrumbs from "@/components/breadcrumbs";
 import { AddPhoto } from "@/components/addItem/addPhoto";
 import PublishedModal from "@/components/modals/published";
 import { SetState, axiosQuery } from "@/utilities/utilities";
+import { useAppDispatch } from "@/utilities/hooks";
+import { toggle } from "@/store/notificationsSlice";
+import { actionPublished } from "@/store/actions/modal";
 
-const SellStart = ({ stage, setStage }: { stage: number; setStage: SetState<number> }) => {
+const SellStart = ({ setStage }: { setStage: SetState<number> }) => {
   return (
     <div className='sell-start d-grid'>
       <div className='sell-start_content d-flex flex-column justify-content-between w-100'>
@@ -89,7 +92,7 @@ const SellStart = ({ stage, setStage }: { stage: number; setStage: SetState<numb
   );
 };
 
-const AppSelection = ({ stage, setStage, setActiveApp }: { stage: number; setStage: SetState<number>; setActiveApp: SetState<number> }) => {
+const AppSelection = ({ setStage, setActiveApp }: { setStage: SetState<number>; setActiveApp: SetState<number> }) => {
   interface App {
     id: number;
     miniPic: string;
@@ -192,14 +195,20 @@ const AppSelection = ({ stage, setStage, setActiveApp }: { stage: number; setSta
       </div>
       <div className='gaa-catalog d-grid'>
         {displayEntities.map((item, i) => (
-          <Link className='gaa-item d-flex' href='/catalog/'>
+          <div
+            className='gaa-item d-flex'
+            style={{ cursor: "pointer" }}
+            onClick={(e) => {
+              setActiveApp(item.id);
+              setStage(2);
+            }}>
             <div className='gaa-item_icon'>
               <img src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/apps/${item.miniPic}`} className='w-100 h-100' alt='' />
             </div>
             <div className='gaa-item-info'>
               <p className='gaa-item_name two-lines'>{item.name}</p>
             </div>
-          </Link>
+          </div>
         ))}
       </div>
       {!endReached && <Pagination onClick={getMore} />}
@@ -207,87 +216,225 @@ const AppSelection = ({ stage, setStage, setActiveApp }: { stage: number; setSta
   );
 };
 
-const ProductDetails = ({ stage, setStage }: { stage: number; setStage: SetState<number> }) => {
+interface Constraint {
+  id: number;
+  type: string;
+  name: string;
+  value: string[];
+}
+
+interface ProductWithCats {
+  id: number;
+  name: string;
+  categories: {
+    id: number;
+    name: string;
+    constraints: {
+      id: number;
+      type: string;
+      name: string;
+      value: string[];
+    }[];
+  }[];
+}
+
+const Property = ({
+  constraint,
+  properties,
+  setProperties,
+}: {
+  constraint: Constraint;
+  properties: Record<string, string | string[]>;
+  setProperties: SetState<Record<string, string | number | boolean>>;
+}) => {
+  const thisPropertyName = constraint.name;
+  const thisState = properties[thisPropertyName];
+
+  useEffect(() => {
+    return () => setProperties({});
+  }, []);
+
+  if (constraint.type === "oneOf") {
+    useEffect(() => {
+      setProperties((prev) => ({ ...prev, [`${thisPropertyName}`]: constraint.value[0] }));
+    }, []);
+    return (
+      <div className='add-item-row'>
+        <div className='add-item-row_name'>{constraint.name}</div>
+        <div className='add-item-row_content'>
+          <div className='radio-container d-flex'>
+            {constraint.value.map((item) => (
+              <label
+                className={`btn radio-item d-flex align-items-center justify-content-center ${thisState === item ? " active" : ""}`}
+                onClick={() => setProperties((prev) => ({ ...prev, [`${thisPropertyName}`]: item }))}>
+                <input type='radio' name='server' />
+                <div className='radio-name'>{item}</div>
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (constraint.type === "numeric") {
+    useEffect(() => {
+      setProperties((prev) => ({ ...prev, [`${thisPropertyName}`]: parseFloat(constraint.value[0]) }));
+    }, []);
+    return (
+      <div className='add-item-row'>
+        <div className='add-item-row_name'>
+          {constraint.name}
+          {` (от ${constraint.value[0]} до ${constraint.value[1]})`}
+        </div>
+        <div className='add-item-row_content'>
+          <div className='field-container'>
+            <input
+              type='text'
+              placeholder={`от ${constraint.value[0]} до ${constraint.value[1]}`}
+              value={thisState || 0}
+              onChange={(e) => setProperties((prev) => ({ ...prev, [`${thisPropertyName}`]: parseFloat(e.target.value) }))}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (constraint.type === "binary") {
+    const [checked, setChecked] = useState(false);
+    useEffect(() => {
+      setProperties((prev) => ({ ...prev, [`${thisPropertyName}`]: checked }));
+    }, [checked]);
+    return (
+      <div className='add-item-row'>
+        <div className='add-item-row_content'>
+          <div className='checkbox-container'>
+            <label className='btn checkbox-item active d-flex align-items-center justify-content-center'>
+              <input type='checkbox' name='mail_access' onClick={() => setChecked(!checked)} />
+              <div className='checkbox-name'>{constraint.name}</div>
+            </label>
+          </div>
+        </div>
+      </div>
+    );
+  }
+};
+
+const ProductDetails = ({
+  appId,
+  imagesArray,
+  setImagesArray,
+  properties,
+  setProperties,
+}: {
+  appId: number;
+  imagesArray: any[];
+  setImagesArray: SetState<any[]>;
+  properties: Record<string, string | string[]>;
+  setProperties: SetState<Record<string, string | number | boolean>>;
+}) => {
+  const [data, setData] = useState<ProductWithCats>(null);
+  const [activeCategory, setActiveCategory] = useState<number>(null);
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState(0);
+  const [desc, setDesc] = useState("");
+  const dispatch = useAppDispatch();
+
+  // useEffect(() => {
+  //   setProperties({});
+  // }, [activeCategory]);
+
+  const createProduct = async () => {
+    try {
+      if (!name) {
+        throw new Error("Заполните название товара");
+      }
+      if (!imagesArray.length) {
+        throw new Error("Заполните фото товара");
+      }
+      if (!desc) {
+        throw new Error("Заполните описание товара");
+      }
+      const payload = new FormData();
+      payload.append("name", name);
+      payload.append("description", desc);
+      payload.append("price", price.toString());
+      payload.append("properties", JSON.stringify(properties));
+      payload.append("categoryId", activeCategory.toString());
+      imagesArray.forEach((item) => payload.append("files", item.file));
+      const res = await axiosQuery({
+        url: "/products",
+        method: "post",
+        payload: payload,
+      });
+      if (res.data.id) {
+        dispatch(actionPublished());
+      }
+    } catch (e) {
+      dispatch(toggle({ text: e.message, type: "error" }));
+    }
+  };
+
+  const getCategories = async () => {
+    const res = await axiosQuery({ url: `/apps/${appId}` });
+    setData(res.data);
+    setActiveCategory(res.data.categories[0].id);
+  };
+
+  useEffect(() => {
+    getCategories();
+  }, []);
+
   return (
     <div className='add_item-page d-grid align-items-start'>
       <div className='item-category_list'>
         <div className='add_item-title'>Выберите рубрику</div>
         <div className='item-category_list-content'>
           <ul className='list-none p-0 m-0'>
-            {/* {cats.map((value, i) => (
-              <li className={`d-flex align-items-center justify-content-between position-relative ${i == 0 ? "active" : ""}`} key={i}>
-                {value}
-                <span className='check_indicator d-block position-relative'></span>
-              </li>
-            ))} */}
+            {data &&
+              data.categories.map((value) => (
+                <li
+                  className={`d-flex align-items-center justify-content-between position-relative ${
+                    value.id === activeCategory ? "active" : ""
+                  }`}
+                  key={value.id}
+                  onClick={() => setActiveCategory(value.id)}>
+                  {value.name}
+                  <span className='check_indicator d-block position-relative'></span>
+                </li>
+              ))}
           </ul>
         </div>
       </div>
       <div className='add_item-content'>
         <div className='add-item-row'>
-          <div className='add-item-row_name'>Название товара</div>
+          <div className='add-item-row_name' onClick={() => console.log(properties)}>
+            Название товара
+          </div>
           <div className='add-item-row_content'>
             <div className='field-container'>
-              <input type='text' placeholder='Название товара' />
+              <input type='text' placeholder='Название товара' value={name} onChange={(e) => setName(e.target.value)} />
             </div>
           </div>
         </div>
-        <div className='add-item-row add-item-row_ar'>
-          <div className='add-item-row_name'>AR</div>
-          <div className='add-item-row_content'>
-            <div className='field-container'>
-              <input type='text' placeholder='от 1 до 60' />
-            </div>
-          </div>
-        </div>
-        <div className='add-item-row'>
-          <div className='add-item-row_name'>Сервер</div>
-          <div className='add-item-row_content'>
-            <div className='radio-container d-flex'>
-              <label className='btn radio-item active d-flex align-items-center justify-content-center'>
-                <input type='radio' name='server' />
-                <div className='radio-name'>Европа</div>
-              </label>
-              <label className='btn radio-item d-flex align-items-center justify-content-center'>
-                <input type='radio' name='server' />
-                <div className='radio-name'>Америка</div>
-              </label>
-              <label className='btn radio-item d-flex align-items-center justify-content-center'>
-                <input type='radio' name='server' />
-                <div className='radio-name'>Азия</div>
-              </label>
-              <label className='btn radio-item d-flex align-items-center justify-content-center'>
-                <input type='radio' name='server' />
-                <div className='radio-name'>Другой</div>
-              </label>
-            </div>
-          </div>
-        </div>
-        <div className='add-item-row'>
-          <div className='add-item-row_content'>
-            <div className='checkbox-container'>
-              <label className='btn checkbox-item active d-flex align-items-center justify-content-center'>
-                <input type='checkbox' name='mail_access' />
-                <div className='checkbox-name'>Доступ к почте</div>
-              </label>
-              <label className='btn checkbox-item active d-flex align-items-center justify-content-center'>
-                <input type='checkbox' name='rebinding' />
-                <div className='checkbox-name'>Перепривязка</div>
-              </label>
-            </div>
-          </div>
-        </div>
+        {data &&
+          data.categories
+            .find((item) => item.id === activeCategory)
+            .constraints.map((constraint) => (
+              <Property constraint={constraint} properties={properties} setProperties={setProperties} key={constraint.id} />
+            ))}
         <div className='add-item-row add-item-row_photo'>
-          <div className='add-item-row_name'>Фото 2/10</div>
+          <div className='add-item-row_name'>Фото {imagesArray.length}/10</div>
           <div className='add-item-row_content'>
-            <AddPhoto />
+            <AddPhoto imagesArray={imagesArray} setImagesArray={setImagesArray} />
           </div>
         </div>
         <div className='add-item-row'>
           <div className='add-item-row_name'>Описание товара</div>
           <div className='add-item-row_content'>
             <div className='field-container'>
-              <textarea name='' id='' placeholder='Описание товара'></textarea>
+              <textarea name='' id='' placeholder='Описание товара' value={desc} onChange={(e) => setDesc(e.target.value)}></textarea>
             </div>
           </div>
         </div>
@@ -295,7 +442,12 @@ const ProductDetails = ({ stage, setStage }: { stage: number; setStage: SetState
           <div className='add-item-row_name'>Цена</div>
           <div className='add-item-row_content'>
             <div className='field-container position-relative'>
-              <input type='text' placeholder='Введите сумму' />
+              <input
+                type='text'
+                placeholder='Введите сумму'
+                value={price}
+                onChange={(e) => setPrice(Number.isNaN(parseFloat(e.target.value)) ? 0 : parseFloat(e.target.value))}
+              />
             </div>
             <div className='field-info'>
               <div className='field-info-item d-flex justify-content-between'>
@@ -309,50 +461,52 @@ const ProductDetails = ({ stage, setStage }: { stage: number; setStage: SetState
             </div>
           </div>
         </div>
-        <div className='add-item-row'>
+        {/* <div className='add-item-row'>
           <div className='add-item-row_name'>Данные для покупателя</div>
           <div className='add-item-row_content'>
             <div className='field-container'>
               <textarea name='' id='' placeholder='Покупатель получит после оплаты... (логин, пароль, инструкцию и т.д.)'></textarea>
             </div>
           </div>
-        </div>
-        <button className='btn btn_step w-100'>Далее</button>
+        </div> */}
+        <button className='btn btn_step w-100' onClick={createProduct}>
+          Далее
+        </button>
       </div>
     </div>
   );
 };
 
+export interface Image {
+  file: File;
+  preview?: string;
+}
+
 export default function Sell() {
-  const cats = [
-    "Донат",
-    "Аккаунты",
-    "Предметы",
-    "Другое",
-    "Игровая валюта",
-    "Подписки",
-    "Аккаунты с играми",
-    "Скины",
-    "Буст",
-    "Медиа",
-    "Услуги",
-    "Дизайн",
-  ];
-
-  // const games = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
-
   const [activeApp, setActiveApp] = useState(null);
   const [stage, setStage] = useState(0);
+  const [imagesArray, setImagesArray] = useState<Image[]>([]);
+  const [properties, setProperties] = useState<Record<string, string>>({});
+
+  // const [dataForUser, setDataForUser] = useState('')
 
   return (
     <MainLayout title={"Продать"}>
       <div className='content-column'>
         <div className='container'>
-          <Breadcrumbs />
-          {stage === 0 && <SellStart stage={stage} setStage={setStage} />}
-          {stage === 1 && <AppSelection stage={stage} setStage={setStage} setActiveApp={setActiveApp} />}
+          <Breadcrumbs currentCrumbs={["Продажа"]} />
+          {stage === 0 && <SellStart setStage={setStage} />}
+          {stage === 1 && <AppSelection setStage={setStage} setActiveApp={setActiveApp} />}
+          {stage === 2 && (
+            <ProductDetails
+              appId={activeApp}
+              imagesArray={imagesArray}
+              setImagesArray={setImagesArray}
+              properties={properties}
+              setProperties={setProperties}
+            />
+          )}
         </div>
-
         <PublishedModal />
       </div>
     </MainLayout>

@@ -9,6 +9,7 @@ import {
   modalPayout,
   modalPublished,
   modalReg,
+  modalReviewForm,
   modalSettings,
 } from "./reducers/modal";
 import userReducer from "./userSlice";
@@ -28,6 +29,7 @@ export const store = configureStore({
     modalFilter: modalFilter,
     modalPayment: modalPayment,
     modalPayout: modalPayout,
+    modalReviewForm: modalReviewForm,
     // notification: notificationReducer,
     // loader: loaderReducer,
   },

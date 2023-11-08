@@ -1,8 +1,8 @@
 import React from "react";
 
-export default function BtnCopy() {
+export default function BtnCopy({ onClick }: { onClick: () => void }) {
   return (
-    <button className='btn btn_copy-link'>
+    <button className='btn btn_copy-link' onClick={onClick}>
       <svg xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='none'>
         <path
           stroke='#18130C'

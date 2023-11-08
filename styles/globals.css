@@ -882,6 +882,21 @@ footer {
   background: linear-gradient(145deg, #00b554 0%, #8efe00 100%);
 }
 
+.leave-review {
+  background: linear-gradient(103deg, #fe6546 40.6%, #ff9e0d 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 12px; /* 100% */
+  cursor: pointer;
+  /* text-decoration-color: linear-gradient(103deg, #fe6546 40.6%, #ff9e0d 100%);
+  -moz-text-decoration-color: linear-gradient(103deg, #fe6546 40.6%, #ff9e0d 100%); */
+  /* text-decoration: underline linear-gradient(103deg, #fe6546 40.6%, #ff9e0d 100%); */
+}
+
 .product-item-info {
   padding: 7px 10px 17px;
   flex-grow: 1;

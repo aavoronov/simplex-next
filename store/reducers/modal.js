@@ -29,6 +29,9 @@ import {
   ACTION_PAYOUT,
   ACTION_PAYOUT_FALSE,
   ACTION_PAYOUT_TRUE,
+  ACTION_REVIEW_FORM,
+  ACTION_REVIEW_FORM_FALSE,
+  ACTION_REVIEW_FORM_TRUE,
 } from "../actions/modal";
 
 const initState = false;
@@ -111,13 +114,26 @@ export const modalChat = (state = !initState, action) => {
   }
 };
 
-export const modalPublished = (state = !initState, action) => {
+export const modalPublished = (state = initState, action) => {
   switch (action.type) {
     case ACTION_PUBLISHED:
       return !state;
     case ACTION_PUBLISHED_FALSE:
       return false;
     case ACTION_PUBLISHED_TRUE:
+      return true;
+    default:
+      return state;
+  }
+};
+
+export const modalReviewForm = (state = !initState, action) => {
+  switch (action.type) {
+    case ACTION_REVIEW_FORM:
+      return !state;
+    case ACTION_REVIEW_FORM_FALSE:
+      return false;
+    case ACTION_REVIEW_FORM_TRUE:
       return true;
     default:
       return state;
@@ -150,7 +166,7 @@ export const modalPayment = (state = initState, action) => {
   }
 };
 
-export const modalPayout = (state = !initState, action) => {
+export const modalPayout = (state = initState, action) => {
   switch (action.type) {
     case ACTION_PAYOUT:
       return !state;

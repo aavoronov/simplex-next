@@ -8,8 +8,9 @@ import { useAppSelector } from "@/utilities/hooks";
 
 export default function Header() {
   const { width } = useWindowSize();
+  const [searchValue, setSearchValue] = useState("");
 
-  const { login, role, profilePic } = useAppSelector((state) => state.user);
+  const { name, role, profilePic } = useAppSelector((state) => state.user);
 
   return (
     <>
@@ -28,8 +29,21 @@ export default function Header() {
           </button>
           <div className='header-search gradient w-100'>
             <form className='position-relative w-100' action=''>
-              <input className='search-input w-100' type='text' placeholder='Поиск игр и приложений' />
-              <button className='btn_search d-flex align-items-center justify-content-start position-absolute p-0'>
+              <input
+                className='search-input w-100'
+                type='text'
+                placeholder='Поиск игр и приложений'
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+              />
+              <Link
+                href={{
+                  pathname: `/search`,
+                  query: {
+                    search: searchValue, // pass the id
+                  },
+                }}
+                className='btn_search d-flex align-items-center justify-content-start position-absolute p-0'>
                 <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none'>
                   <path
                     stroke='#929292'
@@ -39,14 +53,14 @@ export default function Header() {
                     d='M10 15.974c3.314 0 6-2.682 6-5.99a5.995 5.995 0 0 0-6-5.99c-3.314 0-6 2.681-6 5.99a5.995 5.995 0 0 0 6 5.99ZM20 19.967l-5-5.99'
                   />
                 </svg>
-              </button>
+              </Link>
             </form>
           </div>
           <div className='user-controls d-flex align-items-center justify-content-end'>
             {role ? (
               <div className='user-profile d-flex align-items-center justify-content-end'>
                 <div className='user-profile-info text-end'>
-                  <div className='user-profile-info-name'>{login} | Баланс</div>
+                  <div className='user-profile-info-name'>{name} | Баланс</div>
                   <div className='user-profile-balance'>0</div>
                   <button className='btn user-profile-balance_add gradient_green d-flex align-items-center justify-content-between ms-auto'>
                     Пополнить <span>+</span>

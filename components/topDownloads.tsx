@@ -17,9 +17,9 @@ export default function TopDownloads({ data, title }: { data: App[]; title: stri
       <div className='top-downloads_block-items'>
         <ScrollContainer className='top-downloads_scroll d-flex'>
           {displayData.map((value, i) => (
-            <Link key={i} className='top-downloads-item d-flex flex-column' href=''>
+            <Link key={i} className='top-downloads-item d-flex flex-column' href={`/catalog/${value.app.id}`}>
               <div className='top-downloads-item_icon w-100'>
-                <img src='../images/top_d.png' className='w-100 h-100' alt='' />
+                <img src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/apps/${value.app.miniPic}`} className='w-100 h-100' alt='' />
               </div>
               <p className='top-downloads-item_name two-lines'>{value.app.name}</p>
               <div className='item-raiting d-flex align-items-center'>

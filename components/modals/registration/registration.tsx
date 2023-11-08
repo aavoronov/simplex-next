@@ -9,8 +9,13 @@ import Email from "./components/email";
 import Phone from "./components/phone";
 import Success from "./components/success";
 import { axiosQuery } from "@/utilities/utilities";
+import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 
 export default function Registration() {
+  const searchParams = useSearchParams();
+
+  // console.log("searchParams", searchParams.get("invite"));
   const regTypes = [
     {
       img: "type1.svg",
@@ -31,7 +36,7 @@ export default function Registration() {
   ];
 
   const oneClickSignUp = async () => {
-    const res = await axiosQuery({ url: "/users/one-click", method: "post" });
+    const res = await axiosQuery({ url: "/users/one-click", method: "post", payload: { invite: searchParams.get("invite") } });
     console.log(res.data);
     setOneClickData(res.data);
   };
@@ -131,9 +136,10 @@ export default function Registration() {
         </div>
         <div className='modal-content d-flex flex-column align-items-center w-100'>
           {regType === regTypes[0].name && <OneClick onClick={oneClickSignUp} />}
-          {regType === regTypes[1].name && <Socials />}
-          {regType === regTypes[2].name && <Email />}
-          {regType === regTypes[3].name && <Phone />}
+          {/* {regType === regTypes[1].name && <Socials invite={searchParams.get("invite")} />} */}
+          {regType === regTypes[2].name && <Email invite={searchParams.get("invite")} />}
+          {regType === regTypes[3].name && <Phone invite={searchParams.get("invite")} />}
+
           <div className='modal-content-text'>
             Уже есть аккаунт?{" "}
             <button

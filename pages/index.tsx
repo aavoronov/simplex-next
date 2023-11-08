@@ -9,6 +9,9 @@ import ScrollContainer from "react-indiana-drag-scroll";
 import Pagination from "@/components/pagination";
 import ProductItem from "@/components/productItem";
 import { axiosQuery } from "@/utilities/utilities";
+import { useSearchParams } from "next/navigation";
+import { useAppDispatch } from "@/utilities/hooks";
+import { actionRegistration, actionRegistrationTrue } from "@/store/actions/modal";
 
 export interface App {
   id: number;
@@ -69,6 +72,17 @@ export default function Home() {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [endReached, setEndReached] = useState(false);
+
+  const searchParams = useSearchParams();
+  const dispatch = useAppDispatch();
+
+  console.log("searchParams", searchParams.get("invite"));
+
+  useEffect(() => {
+    if (searchParams.get("invite")) {
+      dispatch(actionRegistrationTrue());
+    }
+  }, [searchParams]);
 
   const bonuses = [1, 2, 3, 4];
 

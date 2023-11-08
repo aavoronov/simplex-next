@@ -8,16 +8,25 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 
 import * as Yup from "yup";
 import { axiosQuery } from "@/utilities/utilities";
-import { setCookie } from "cookies-next";
+import { getCookie, setCookie } from "cookies-next";
 import { toggle } from "@/store/notificationsSlice";
 import { updateProfile } from "@/store/userSlice";
+import { useRouter } from "next/router";
 
 let yup = require("yup");
 
 export default function Login() {
   const loginModal = useAppSelector((state) => state.modalLogin);
   const dispatch = useAppDispatch();
-  const loginModalAction = () => dispatch(actionLogin());
+  const token = getCookie("simple-token");
+  const router = useRouter();
+
+  const loginModalAction = () => {
+    dispatch(actionLogin());
+    if (!token) {
+      router.push("/");
+    }
+  };
 
   const [passwordShow, setPasswordShow] = useState(null);
 

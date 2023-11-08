@@ -17,7 +17,7 @@ export default function ReviewsCard({ product }: { product: ProductWithReviews }
               )}
             </div>
             <div className='buyer-info'>
-              <div className='buyer-name'>{review.user.login}</div>
+              <div className='buyer-name'>{review.user.name}</div>
               <div className='buyer-stars'>
                 <svg xmlns='http://www.w3.org/2000/svg' width='66' height='10' fill='none'>
                   <path
@@ -74,7 +74,7 @@ export default function ReviewsCard({ product }: { product: ProductWithReviews }
           )}
         </div>
 
-        <Link href='/product/' className='reviews-item-product d-flex align-items-center justify-content-between w-100'>
+        <Link href={`/products/${product.id}`} className='reviews-item-product d-flex align-items-center justify-content-between w-100'>
           <div className='reviews-item-product-image'>
             <img className='w-100 h-100' src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/products/${product.pics[0]}`} alt='' />
           </div>

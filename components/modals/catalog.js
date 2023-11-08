@@ -4,22 +4,7 @@ import { useAppSelector, useAppDispatch } from "@/utilities/hooks";
 import Link from "next/link";
 import { actionCatalog, actionFilter } from "../../store/actions/modal";
 
-export default function Catalog() {
-  const cats = [
-    "Донат",
-    "Аккаунты",
-    "Предметы",
-    "Другое",
-    "Игровая валюта",
-    "Подписки",
-    "Аккаунты с играми",
-    "Скины",
-    "Буст",
-    "Медиа",
-    "Услуги",
-    "Дизайн",
-  ];
-
+export default function Catalog({ cats }) {
   const catsModal = useAppSelector((state) => state.catalogMenu);
   const dispatch = useAppDispatch();
   const catsModalAction = () => dispatch(actionCatalog());
@@ -58,14 +43,22 @@ export default function Catalog() {
         <div className='modal-title text-center'>Категория</div>
         <div className='modal-cats_list overflow-auto'>
           {cats.map((value, i) => (
-            <div className='cat-link d-flex align-items-center justify-content-between w-100' key={i}>
-              {value}
-              <span className='cat-link-icon' onClick={() => dispatch(actionFilter())}>
-                <svg xmlns='http://www.w3.org/2000/svg' width='8' height='14' viewBox='0 0 8 14' fill='none'>
-                  <path d='M1 13L7 7L1 1' stroke='#18130C' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' />
-                </svg>
-              </span>
-            </div>
+            <Link
+              href={{
+                pathname: `/categories/[globalCategory]`,
+                query: {
+                  globalCategory: i + 1, // pass the id
+                },
+              }}>
+              <div className='cat-link d-flex align-items-center justify-content-between w-100' key={i}>
+                {value}
+                <span className='cat-link-icon' onClick={() => dispatch(actionFilter())}>
+                  <svg xmlns='http://www.w3.org/2000/svg' width='8' height='14' viewBox='0 0 8 14' fill='none'>
+                    <path d='M1 13L7 7L1 1' stroke='#18130C' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' />
+                  </svg>
+                </span>
+              </div>
+            </Link>
           ))}
         </div>
       </Modal>

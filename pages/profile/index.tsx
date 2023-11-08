@@ -9,12 +9,13 @@ import Sales from "@/components/profile/sales";
 import MyGoods from "@/components/profile/myGoods";
 import Settings from "@/components/modals/settings";
 import { axiosQuery, getPreciseAverage, getPrettyAge } from "@/utilities/utilities";
-import { useAppSelector } from "@/utilities/hooks";
+import { useAppDispatch, useAppSelector } from "@/utilities/hooks";
+import { actionLoginTrue } from "@/store/actions/modal";
+import { getCookie } from "cookies-next";
 
 interface Profile {
   id: number;
-  name: any;
-  login: string;
+  name: string;
   isBlocked: boolean;
   createdAt: string;
   average: string;
@@ -40,7 +41,9 @@ export default function Profile() {
   const [activeTab, setActiveTab] = useState("balance");
   const [profile, setProfile] = useState<Profile>(null);
 
-  const { id, login, profilePic } = useAppSelector((state) => state.user);
+  const { id, login, profilePic, name, inviteToken } = useAppSelector((state) => state.user);
+  const token = getCookie("simple-token");
+  const dispatch = useAppDispatch();
 
   const getUser = async () => {
     const res = await axiosQuery({ url: `/users/${id}` });
@@ -49,13 +52,18 @@ export default function Profile() {
 
   useEffect(() => {
     if (id) getUser();
+    // if (!id) dispatch(actionLoginTrue());
   }, [id]);
+
+  if (!token) {
+    dispatch(actionLoginTrue());
+  }
 
   return (
     <MainLayout title={"Профиль"}>
       <div className='content-column'>
         <div className='container'>
-          <Breadcrumbs />
+          <Breadcrumbs currentCrumbs={["Профиль"]} />
           <div className='profile-wrapper d-grid'>
             <div className='profile_controls w-100'>
               {!!profile && (
@@ -69,7 +77,7 @@ export default function Profile() {
                     <div className='online-check position-absolute'></div>
                   </div>
                   <div className='seller-info position-relative'>
-                    <div className='seller-name'>{login}</div>
+                    <div className='seller-name'>{name}</div>
                     <div className='seller-raiting'>
                       <div className='item-raiting d-flex align-items-center'>
                         <div className='item-raiting_num'>{getPreciseAverage(profile.average)}</div>
@@ -89,7 +97,7 @@ export default function Profile() {
                 <div className='btn_profile-name'>Баланс</div>
                 <div className='btn_balance-sum'>5 000 ₽</div>
               </button>
-              <Link className='friend_invite-link d-flex align-items-center position-relative w-100' href=''>
+              <Link className='friend_invite-link d-flex align-items-center position-relative w-100' href='/profile/invite'>
                 <div className='friend_invite-link_inner position-relative'>
                   <div className='friend_invite-link-name'>Пригласить друга</div>
                   <div className='friend_invite-link-text'>Получить +10% от первой оплаты</div>
@@ -118,9 +126,9 @@ export default function Profile() {
                   onClick={() => setActiveTab("sales")}>
                   <div className='btn_profile-name'>Продажи</div>
                 </button>
-                <button className='btn btn_profile d-flex align-items-center justify-content-between w-100'>
+                <Link href='/sell' className='btn btn_profile d-flex align-items-center justify-content-between w-100'>
                   <div className='btn_profile-name'>Выставить товар</div>
-                </button>
+                </Link>
                 <Exit />
               </div>
             </div>

@@ -60,14 +60,14 @@ export default function Success({ login, password }: { login: string; password: 
             <span className='form-row-label d-block position-absolute'>Логин</span>
             <input disabled className='customInput w-100' type='text' value={login} />
             <div onClick={() => navigator.clipboard.writeText(login)}>
-              <BtnCopy />
+              <BtnCopy onClick={() => navigator.clipboard.writeText(login)} />
             </div>
           </div>
           <div className='form-row position-relative w-100'>
             <span className='form-row-label d-block position-absolute'>Пароль</span>
             <input disabled className='customInput w-100' type='text' value={password} />
             <div onClick={() => navigator.clipboard.writeText(password)}>
-              <BtnCopy />
+              <BtnCopy onClick={() => navigator.clipboard.writeText(password)} />
             </div>
           </div>
         </div>

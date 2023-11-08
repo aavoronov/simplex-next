@@ -39,12 +39,12 @@ const Chat = ({
             <img className='w-100 h-100' src='../images/anonymous.png' alt='' />
           )}
         </div>
-        {isOnline && <div className='online-check position-absolute'></div>}
+        {(isOnline || !!chat.type) && <div className='online-check position-absolute'></div>}
       </div>
       <div className='chat-person-info'>
         <div className='chat-person-info_head d-flex align-items-center justify-content-between'>
           <div className='chat-person-name d-flex align-items-center'>
-            {chat.accesses[0].user.login}
+            {chat.accesses[0].user.name}
             <div className='verify-icon'>
               <img src='../images/verify.svg' alt='' />
             </div>
@@ -54,7 +54,7 @@ const Chat = ({
         {/* <div className='chat-person-text two-lines'>{!!messages.length && messages[messages.length - 1].message}</div> */}
         {!!currentChatMessages.length && (
           <div className='chat-person-text two-lines'>
-            {(lastMessageIsMine ? "Вы: " : chat.accesses[0].user.login + ": ") + lastMessage?.message}
+            {(lastMessageIsMine ? "Вы: " : chat.accesses[0].user.name + ": ") + lastMessage?.message}
           </div>
         )}
       </div>

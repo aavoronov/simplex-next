@@ -1,12 +1,29 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Modal from "react-modal";
 import { useAppSelector, useAppDispatch } from "@/utilities/hooks";
 import Link from "next/link";
 import { actionSettings } from "../../store/actions/modal";
+import { axiosQuery } from "@/utilities/utilities";
+import { updateProfile } from "@/store/userSlice";
+
+import { getDroppedOrSelectedFiles } from "html5-file-selector";
+
+import Dropzone from "react-dropzone-uploader";
+
+interface Image {
+  file: File;
+  preview?: string;
+}
+
+type Payload =
+  | {
+      name: string;
+    }
+  | FormData;
 
 export default function Settings() {
   const settingsModal = useAppSelector((state) => state.modalSettings);
-  const { profilePic } = useAppSelector((state) => state.user);
+  const { profilePic, name, login } = useAppSelector((state) => state.user);
 
   const dispatch = useAppDispatch();
   const settingsModalAction = () => dispatch(actionSettings());
@@ -14,6 +31,67 @@ export default function Settings() {
   const [checked, setChecked] = useState(true);
   const handleChecked = () => {
     setChecked(!checked);
+  };
+  const [nickname, setNickname] = useState(name);
+  const [image, setImage] = useState<Image>(null);
+
+  const editProfile = async (payload: Payload) => {
+    const res = await axiosQuery({ url: `/users`, method: "patch", payload });
+    dispatch(updateProfile({ name: res.data.name, profilePic: res.data.profilePic }));
+  };
+
+  const inputRef = useRef();
+
+  const getFilesFromEvent = (e) => {
+    return new Promise((resolve) => {
+      getDroppedOrSelectedFiles(e).then((chosenFiles) => {
+        resolve(chosenFiles.map((f) => f.fileObject));
+      });
+    });
+  };
+
+  // called every time a file's `status` changes
+  const handleAddPreview = ({ meta, file }, status) => {
+    // console.log(file);
+    if (status === "done") {
+      setImage({ file, preview: meta.previewUrl });
+    }
+  };
+
+  const Input = ({ accept, onFiles, files }) => {
+    console.log(onFiles);
+    return (
+      <>
+        {/* <div style={{ width: 200, height: 20, zIndex: 100, backgroundColor: "salmon" }} onClick={() => console.log(files)}>
+          <span>huiblyat</span>
+        </div> */}
+        <label className={`dzu-inputLabel`} style={{ position: "relative", height: 100 }}>
+          {image ? (
+            <img className='w-100 h-100' src={image.preview} alt='' />
+          ) : profilePic ? (
+            <img className='w-100 h-100' src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/users/${profilePic}`} alt='' />
+          ) : (
+            <img className='w-100 h-100' src='../images/anonymous.png' alt='' />
+          )}
+          <input
+            disabled={false}
+            ref={inputRef}
+            style={{ display: "none" }}
+            type='file'
+            accept={accept}
+            onChange={(e) => {
+              getFilesFromEvent(e).then((chosenFiles) => {
+                onFiles(chosenFiles);
+              });
+            }}
+          />
+        </label>
+      </>
+    );
+  };
+
+  const Preview = () => {
+    return <></>;
   };
 
   return (
@@ -43,39 +121,61 @@ export default function Settings() {
         </button>
         <div className='modal-title text-center'>Настройки</div>
         <div className='d-flex flex-column align-items-center'>
-          <div className='change-avatar'>
+          <div className='change-avatar d-flex flex-column align-items-center'>
             <div className='ava-image'>
-              {profilePic ? (
-                <img className='w-100 h-100' src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/users/${profilePic}`} alt='' />
-              ) : (
-                <img className='w-100 h-100' src='../images/anonymous.png' alt='' />
-              )}
+              <Dropzone
+                onChangeStatus={handleAddPreview}
+                PreviewComponent={Preview}
+                accept='image/*'
+                InputComponent={Input}
+                maxFiles={100}
+              />
             </div>
-            <button className='btn btn_change-ava text-center' type='button' tabindex='0'>
-              <input accept='image/*' type='file' autocomplete='off' tabindex='-1' />
-              Изменить фото
+            <button
+              className='btn btn_change-ava text-center'
+              type='button'
+              onClick={() => {
+                console.log(image);
+                // const payload = new FormData();
+                // payload.append("profilePic", image.file);
+                // editProfile(payload);
+              }}>
+              {image ? "Загрузить фото" : "Нажмите, чтобы выбрать фото"}
             </button>
           </div>
           <div className='settings-content settings-top w-100'>
+            <div className='settings-item d-flex align-items-center justify-content-between w-100'>
+              <div className='d-flex align-items-center' style={{ gap: 18 }}>
+                <div className='settings-item_icon m-20'>
+                  <img className='w-100 h-100' src='../images/smiley.svg' alt='' />
+                </div>
+                <div className='setting-item-text'>
+                  <input className='m-0' value={nickname} onChange={(e) => setNickname(e.target.value)} style={{ borderWidth: 0 }} />
+                </div>
+              </div>
+              <button className='btn btn_change-ava text-center' type='button' onClick={() => editProfile({ name: nickname })}>
+                Изменить
+              </button>
+            </div>
             <div className='settings-item d-flex align-items-center w-100'>
               <div className='settings-item_icon'>
                 <img className='w-100 h-100' src='../images/s1.svg' alt='' />
               </div>
               <div className='setting-item-text'>
-                <p className='m-0'>a.green21041992@gmail.com</p>
+                <p className='m-0'>{login}</p>
               </div>
             </div>
-            <div className='settings-item d-flex align-items-center w-100'>
+            {/* <div className='settings-item d-flex align-items-center w-100'>
               <div className='settings-item_icon'>
                 <img className='w-100 h-100' src='../images/s2.png' alt='' />
               </div>
               <div className='setting-item-text'>
                 <p className='m-0'>Вы вошли через Google</p>
               </div>
-            </div>
+            </div> */}
           </div>
           <div className='settings-content settings-middle w-100'>
-            <div className='settings-item d-flex align-items-start w-100'>
+            {/* <div className='settings-item d-flex align-items-start w-100'>
               <div className='settings-item_icon'>
                 <img className='w-100 h-100' src='../images/s3.svg' alt='' />
               </div>
@@ -87,11 +187,11 @@ export default function Settings() {
                 {checked ? "вкл." : "выкл."}
                 <label className='switch-item'>
                   <input onChange={handleChecked} type='checkbox' checked={checked} />
-                  <span className='slider round'></span>
+                  <span className={`slider round ${checked ? "checked" : ""}`}></span>
                 </label>
               </div>
-            </div>
-            <Link href='' className='settings-item settings-item_friend d-flex align-items-start position-relative w-100'>
+            </div> */}
+            <Link href='/profile/invite' className='settings-item settings-item_friend d-flex align-items-start position-relative w-100'>
               <div className='settings-item_icon'>
                 <img className='w-100 h-100' src='../images/s4.svg' alt='' />
               </div>
@@ -102,7 +202,7 @@ export default function Settings() {
             </Link>
           </div>
           <div className='settings-content settings-bottom w-100'>
-            <Link href='' className='settings-item d-flex align-items-center w-100'>
+            <Link href='/chat' className='settings-item d-flex align-items-center w-100'>
               <div className='settings-item_icon'>
                 <img className='w-100 h-100' src='../images/s5.svg' alt='' />
               </div>
