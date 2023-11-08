@@ -117,12 +117,18 @@ interface Review {
   };
 }
 
-interface Stats {
+interface User {
+  id: number;
+  name: string;
+  isBlocked: boolean;
+  createdAt: string;
+  profilePic: string;
   average: string;
   count: string;
+  salesCount: string;
 }
 
-export default function Reviews({ data, stats }: { data: Review[]; stats: Stats }) {
+export default function Reviews({ data, user, userId }: { data: Review[]; user: User; userId: number }) {
   const filters = ["Игры", "Категория", "С текстом", "Цена"];
 
   const [reviews, setReviews] = useState(data);
@@ -130,7 +136,7 @@ export default function Reviews({ data, stats }: { data: Review[]; stats: Stats 
   const [endReached, setEndReached] = useState(false);
 
   const getReviews = async (page) => {
-    const res = await axiosQuery({ url: `/reviews?page=${page}` });
+    const res = await axiosQuery({ url: `/reviews/${userId}?page=${page}` });
     setReviews((prev) => [...prev, ...res.data]);
     console.log(res.data);
     setPage((prev) => prev + 1);
@@ -149,7 +155,7 @@ export default function Reviews({ data, stats }: { data: Review[]; stats: Stats 
 
           <div className='reviews-page'>
             <div className='all-reviews-card d-flex align-items-center'>
-              <div className='all-reviews_raiting'>{getPreciseAverage(stats.average)}</div>
+              <div className='all-reviews_raiting'>{getPreciseAverage(user.average)}</div>
               <div className='all-reviews-info'>
                 <div className='all-reviews-stars'>
                   <svg width='105' height='18' viewBox='0 0 105 18' fill='none' xmlns='http://www.w3.org/2000/svg'>
@@ -221,7 +227,7 @@ export default function Reviews({ data, stats }: { data: Review[]; stats: Stats 
                     </defs>
                   </svg>
                 </div>
-                <div className='all-reviews-count'>{stats.count} отзывов</div>
+                <div className='all-reviews-count'>{user.count} отзывов</div>
               </div>
             </div>
             <div className='product-reviews-desc'>Все отзывы оставлены после покупки товаров</div>
@@ -265,11 +271,33 @@ export default function Reviews({ data, stats }: { data: Review[]; stats: Stats 
   );
 }
 
-export async function getServerSideProps() {
-  const res = await axiosQuery({ url: `/reviews/` });
-  const stats = await axiosQuery({ url: `/reviews/stats` });
+// export const getStaticPaths = (async () => {
+//   const ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+//   const paths = ids.map((item) => ({ params: { id: item.toString() } }));
+//   console.log(paths);
+//   return {
+//     paths: paths,
+//     fallback: true,
+//   };
+// }) satisfies GetStaticPaths;
+
+// export async function getStaticProps(context) {
+//   console.log(context.params.id); // return { title: 'Mortal Kombat' }
+//   const res = await axiosQuery({ url: `/reviews/${context.params.id}` });
+//   const user = await axiosQuery({ url: `/users/${context.params.id}` });
+//   // console.log(res.data);
+//   return {
+//     props: { data: res.data, user: user.data, userId: context.params.id }, // will be passed to the page component as props
+//     revalidate: 60,
+//   };
+// }
+
+export async function getServerSideProps(context) {
+  console.log(context.params.id); // return { title: 'Mortal Kombat' }
+  const res = await axiosQuery({ url: `/reviews/${context.params.id}` });
+  const user = await axiosQuery({ url: `/users/${context.params.id}` });
   // console.log(res.data);
   return {
-    props: { data: res.data, stats: stats.data }, // will be passed to the page component as props
+    props: { data: res.data, user: user.data, userId: context.params.id }, // will be passed to the page component as props
   };
 }
