@@ -94,7 +94,7 @@ export default function Footer() {
               <div className='footer-menu'>
                 <ul className='list-none p-0 m-0'>
                   <li>
-                    <Link className='text-decoration-none' href='/reviews'>
+                    <Link className='text-decoration-none' href='/reviews/'>
                       Отзывы
                     </Link>
                   </li>

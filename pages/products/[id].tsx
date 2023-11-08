@@ -132,7 +132,7 @@ export default function Product({ data }: { data: DataType }) {
                 Купить
               </button>
               <div className='product-right-text'>После покупки будет доступен чат с продавцом</div>
-              <Link className='product-right-link d-flex' href=''>
+              <Link className='product-right-link d-flex' href='/'>
                 Гарантия Simple
               </Link>
               {width > 1024 && <FriendInvite sum={parseFloat(data.product.price) / 10} />}
@@ -238,7 +238,7 @@ export default function Product({ data }: { data: DataType }) {
           <div className='product-reviews'>
             <div className='product-reviews-head d-flex align-items-center justify-content-between'>
               <div className='prod-page-title'>Отзывы о {data.user.name}</div>
-              {width >= 768 ? (
+              {/* {width >= 768 ? (
                 <Link
                   className='btn_all-reviews d-flex position-relative'
                   href={{
@@ -250,10 +250,17 @@ export default function Product({ data }: { data: DataType }) {
                   Все отзывы ({data.user.count})
                 </Link>
               ) : (
-                <Link className='btn_all-reviews d-flex position-relative' href=''>
+                <Link
+                  className='btn_all-reviews d-flex position-relative'
+                  href={{
+                    pathname: `/reviews/[id]`,
+                    query: {
+                      id: data.user.id, // pass the id
+                    },
+                  }}>
                   {data.user.count}
                 </Link>
-              )}
+              )} */}
             </div>
             <div className='all-reviews-card d-flex align-items-center'>
               <div className='all-reviews_raiting'>{getPreciseAverage(data.user.average)}</div>
