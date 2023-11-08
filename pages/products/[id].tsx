@@ -238,7 +238,7 @@ export default function Product({ data }: { data: DataType }) {
           <div className='product-reviews'>
             <div className='product-reviews-head d-flex align-items-center justify-content-between'>
               <div className='prod-page-title'>Отзывы о {data.user.name}</div>
-              {/* {width >= 768 ? (
+              {width >= 768 ? (
                 <Link
                   className='btn_all-reviews d-flex position-relative'
                   href={{
@@ -260,7 +260,7 @@ export default function Product({ data }: { data: DataType }) {
                   }}>
                   {data.user.count}
                 </Link>
-              )} */}
+              )}
             </div>
             <div className='all-reviews-card d-flex align-items-center'>
               <div className='all-reviews_raiting'>{getPreciseAverage(data.user.average)}</div>
