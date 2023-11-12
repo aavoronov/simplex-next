@@ -41,16 +41,25 @@ interface Product {
 export default function GlobalCategory({ globalCategory, name }: { globalCategory: number; name: string }) {
   const [apps, setApps] = useState<App[]>([]);
   const [products, setProducts] = useState<ProductThumbnail[]>([]);
+  const [endReached, setEndReached] = useState(false);
+  const [page, setPage] = useState(1);
 
-  const getData = async (id: number) => {
+  const getApps = async (id: number) => {
     const res = await axiosQuery({ url: `/global-categories/${id}` });
-    console.log(res.data);
     setApps(res.data.apps);
-    setProducts(res.data.products);
+  };
+
+  const getProducts = async (id: number, page: number) => {
+    const res = await axiosQuery({ url: `/products?globalCategoryId=${id}&page=${page}` });
+    console.log(res.data);
+    setProducts((prev) => [...prev, ...res.data]);
+    setPage((prev) => prev + 1);
+    if (!res.data.length) setEndReached(true);
   };
 
   useEffect(() => {
-    getData(globalCategory);
+    getApps(globalCategory);
+    getProducts(globalCategory, page);
   }, []);
 
   return (
@@ -68,7 +77,7 @@ export default function GlobalCategory({ globalCategory, name }: { globalCategor
                   <ProductItem key={i} item={value} />
                 ))}
               </div>
-              <Pagination onClick={() => null} />
+              {!endReached && <Pagination onClick={() => getProducts(globalCategory, page)} />}
             </div>
           </div>
         </div>

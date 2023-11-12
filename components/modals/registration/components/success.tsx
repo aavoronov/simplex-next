@@ -59,15 +59,41 @@ export default function Success({ login, password }: { login: string; password: 
           <div className='form-row position-relative w-100'>
             <span className='form-row-label d-block position-absolute'>Логин</span>
             <input disabled className='customInput w-100' type='text' value={login} />
-            <div onClick={() => navigator.clipboard.writeText(login)}>
-              <BtnCopy onClick={() => navigator.clipboard.writeText(login)} />
+            <div
+              onClick={() =>
+                navigator.clipboard
+                  .writeText(login)
+                  .then((res) => res)
+                  .catch((e) => console.log(e))
+              }>
+              <BtnCopy
+                onClick={() =>
+                  navigator.clipboard
+                    .writeText(login)
+                    .then((res) => res)
+                    .catch((e) => console.log(e))
+                }
+              />
             </div>
           </div>
           <div className='form-row position-relative w-100'>
             <span className='form-row-label d-block position-absolute'>Пароль</span>
             <input disabled className='customInput w-100' type='text' value={password} />
-            <div onClick={() => navigator.clipboard.writeText(password)}>
-              <BtnCopy onClick={() => navigator.clipboard.writeText(password)} />
+            <div
+              onClick={() =>
+                navigator.clipboard
+                  .writeText(password)
+                  .then((res) => res)
+                  .catch((e) => console.log(e))
+              }>
+              <BtnCopy
+                onClick={() =>
+                  navigator.clipboard
+                    .writeText(password)
+                    .then((res) => res)
+                    .catch((e) => console.log(e))
+                }
+              />
             </div>
           </div>
         </div>

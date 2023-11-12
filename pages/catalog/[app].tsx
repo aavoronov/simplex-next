@@ -129,36 +129,51 @@ function Filter({
 }) {
   const filterModal = useAppSelector((state) => state.modalFilter);
   const dispatch = useAppDispatch();
-  const filterModalAction = () => dispatch(actionFilter());
+  const filterModalAction = () => {
+    dispatch(actionFilter());
+    setProperties(initialProperties);
+  };
   const initialProperties: Record<string, string> = Object.fromEntries(constraints.map((item) => [`properties.${item.name}`, null]));
   const [productCount, setProductCount] = useState(null);
+  const [priceFrom, setPriceFrom] = useState<number>();
+  const [priceTo, setPriceTo] = useState<number>();
+  const [discount, setDiscount] = useState(false);
+  const [withReviews, setWithReviews] = useState(false);
 
   useEffect(() => {
     setProperties(initialProperties);
-  }, []);
+  }, [constraints]);
 
   const getProductCount = async () => {
     const queryParams = new GetRequestParams();
     queryParams.addParam("categoryId", categoryId.toString());
+    queryParams.addParam("price", `${priceFrom || null}-${priceTo || null}`);
+    discount && queryParams.addParam("discount", "true");
+    withReviews && queryParams.addParam("withReviews", "true");
     queryParams.addParamsFromObject(properties);
 
     const res = await axiosQuery({ url: `/products/count/${appId}?${queryParams.serialize()}` });
     setProductCount(res.data.count);
+    console.log(queryParams.serialize());
   };
 
   const getFilteredProducts = async () => {
     const queryParams = new GetRequestParams();
     queryParams.addParam("categoryId", categoryId.toString());
+    queryParams.addParam("price", `${priceFrom || null}-${priceTo || null}`);
+    discount && queryParams.addParam("discount", "true");
+    withReviews && queryParams.addParam("withReviews", "true");
     queryParams.addParamsFromObject(properties);
 
     setProducts([]);
     getProducts(queryParams);
     dispatch(actionFilter());
+    setProperties(initialProperties);
   };
 
   useEffect(() => {
     getProductCount();
-  }, [properties]);
+  }, [properties, categoryId, priceTo, priceFrom, discount, withReviews]);
 
   return (
     <>
@@ -208,9 +223,23 @@ function Filter({
                 <div className='modal-filter-item w-100'>
                   <div className='filter-label'>Цена</div>
                   <div className='form-row form-row_range form-row_price d-grid align-items-center position-relative'>
-                    <Field className='customInput w-100' type='text' name='price_from' placeholder='От' />
+                    <Field
+                      className='customInput w-100'
+                      type='text'
+                      name='price_from'
+                      placeholder='От'
+                      value={priceFrom}
+                      onChange={(e) => setPriceFrom(e.target.value)}
+                    />
                     —
-                    <Field className='customInput w-100' type='text' name='price_to' placeholder='До' />
+                    <Field
+                      className='customInput w-100'
+                      type='text'
+                      name='price_to'
+                      placeholder='До'
+                      value={priceTo}
+                      onChange={(e) => setPriceTo(e.target.value)}
+                    />
                   </div>
                 </div>
                 <div className='modal-filter-item w-100'>
@@ -226,7 +255,7 @@ function Filter({
                       <div className='toggle-notifications d-flex align-items-center ms-auto'>
                         <label className='switch-item'>
                           <Field className='customInput w-100' type='text' name='sale' value='' />
-                          <span className={`slider round ${false ? "checked" : ""}`}></span>
+                          <span className={`slider round ${discount ? "checked" : ""}`} onClick={() => setDiscount(!discount)}></span>
                         </label>
                       </div>
                     </div>
@@ -240,7 +269,9 @@ function Filter({
                       <div className='toggle-notifications d-flex align-items-center ms-auto'>
                         <label className='switch-item'>
                           <Field className='customInput w-100' type='text' name='reviews' value='' />
-                          <span className='slider round'></span>
+                          <span
+                            className={`slider round ${withReviews ? "checked" : ""}`}
+                            onClick={() => setWithReviews(!withReviews)}></span>
                         </label>
                       </div>
                     </div>
@@ -252,8 +283,10 @@ function Filter({
                   <button
                     className='btn btn_submit gradient d-flex align-items-center justify-content-center mx-auto'
                     type='submit'
-                    onClick={getFilteredProducts}>
-                    Показать {productCount} товаров
+                    onClick={getFilteredProducts}
+                    style={productCount === 0 ? { opacity: 0.5, cursor: "default" } : {}}
+                    disabled={productCount === 0}>
+                    {productCount === 0 ? "0 результатов" : `Показать ${productCount} товаров`}
                   </button>
                 )}
               </div>
@@ -353,13 +386,17 @@ export default function Catalog({ app }: { app: number }) {
                     href='/'
                     onClick={(e) => {
                       e.preventDefault();
-                      setActiveCategory(item);
-                      handleCategoryChange(item.id);
+                      if (activeCategory.id === item.id) {
+                        dispatch(actionFilter());
+                      } else {
+                        setActiveCategory(item);
+                        handleCategoryChange(item.id);
+                      }
                     }}
                     className={`btn catalog-menu-item d-flex align-items-center ${activeCategory.id === item.id ? "active gradient" : ""}`}>
                     <div className='catalog-menu-item_name'>{item.name}</div>
                     {activeCategory.id === item.id && (
-                      <div className='filter-icon' onClick={() => dispatch(actionFilter())}>
+                      <div className='filter-icon'>
                         <svg xmlns='http://www.w3.org/2000/svg' width='16' height='17' fill='none'>
                           <g fill='#fff' clipPath='url(#a)'>
                             <path d='M.667 3.667H2.49a2.485 2.485 0 0 0 4.796 0h8.046a.667.667 0 1 0 0-1.333H7.287a2.485 2.485 0 0 0-4.796 0H.667a.667.667 0 1 0 0 1.333Zm4.222-1.833a1.167 1.167 0 1 1 0 2.333 1.167 1.167 0 0 1 0-2.333ZM15.333 7.833H13.51a2.484 2.484 0 0 0-4.796 0H.667a.667.667 0 0 0 0 1.333h8.046a2.485 2.485 0 0 0 4.796 0h1.824a.667.667 0 1 0 0-1.333Zm-4.222 1.833a1.166 1.166 0 1 1 0-2.333 1.166 1.166 0 0 1 0 2.333ZM15.333 13.334H7.287a2.485 2.485 0 0 0-4.796 0H.667a.666.666 0 1 0 0 1.333H2.49a2.485 2.485 0 0 0 4.796 0h8.046a.667.667 0 1 0 0-1.333ZM4.89 15.167a1.167 1.167 0 1 1 0-2.333 1.167 1.167 0 0 1 0 2.333Z' />
