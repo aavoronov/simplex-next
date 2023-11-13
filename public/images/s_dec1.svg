@@ -8,52 +8,52 @@
 </g>
 <defs>
 <linearGradient id="paint0_linear_248_2273" x1="43.6094" y1="55.5237" x2="67.6418" y2="95.9553" gradientUnits="userSpaceOnUse">
-<stop stopColor="#ED1D77"/>
-<stop offset="0.01" stopColor="#E91D78"/>
-<stop offset="0.23" stopColor="#B72089"/>
-<stop offset="0.33" stopColor="#A3218F"/>
-<stop offset="0.44" stopColor="#810D7A"/>
-<stop offset="0.5" stopColor="#761277"/>
-<stop offset="0.57" stopColor="#611A71"/>
-<stop offset="0.66" stopColor="#5C1E76"/>
-<stop offset="0.77" stopColor="#4F2A85"/>
-<stop offset="0.9" stopColor="#3A3E9D"/>
-<stop offset="1" stopColor="#2254B8"/>
+<stop stop-color="#ED1D77"/>
+<stop offset="0.01" stop-color="#E91D78"/>
+<stop offset="0.23" stop-color="#B72089"/>
+<stop offset="0.33" stop-color="#A3218F"/>
+<stop offset="0.44" stop-color="#810D7A"/>
+<stop offset="0.5" stop-color="#761277"/>
+<stop offset="0.57" stop-color="#611A71"/>
+<stop offset="0.66" stop-color="#5C1E76"/>
+<stop offset="0.77" stop-color="#4F2A85"/>
+<stop offset="0.9" stop-color="#3A3E9D"/>
+<stop offset="1" stop-color="#2254B8"/>
 </linearGradient>
 <linearGradient id="paint1_linear_248_2273" x1="28.1989" y1="-3.64671" x2="35.9772" y2="108.764" gradientUnits="userSpaceOnUse">
-<stop stopColor="#ED1D77"/>
-<stop offset="0.01" stopColor="#E91D78"/>
-<stop offset="0.23" stopColor="#B72089"/>
-<stop offset="0.33" stopColor="#A3218F"/>
-<stop offset="0.44" stopColor="#810D7A"/>
-<stop offset="0.54" stopColor="#761277"/>
-<stop offset="0.68" stopColor="#611A71"/>
-<stop offset="0.72" stopColor="#5C1E76"/>
-<stop offset="0.78" stopColor="#4F2A85"/>
-<stop offset="0.84" stopColor="#3A3E9D"/>
-<stop offset="0.9" stopColor="#2D51B4"/>
-<stop offset="0.92" stopColor="#4C49AB"/>
-<stop offset="0.94" stopColor="#7E3B9B"/>
-<stop offset="0.97" stopColor="#C22985"/>
-<stop offset="0.99" stopColor="#ED1D77"/>
+<stop stop-color="#ED1D77"/>
+<stop offset="0.01" stop-color="#E91D78"/>
+<stop offset="0.23" stop-color="#B72089"/>
+<stop offset="0.33" stop-color="#A3218F"/>
+<stop offset="0.44" stop-color="#810D7A"/>
+<stop offset="0.54" stop-color="#761277"/>
+<stop offset="0.68" stop-color="#611A71"/>
+<stop offset="0.72" stop-color="#5C1E76"/>
+<stop offset="0.78" stop-color="#4F2A85"/>
+<stop offset="0.84" stop-color="#3A3E9D"/>
+<stop offset="0.9" stop-color="#2D51B4"/>
+<stop offset="0.92" stop-color="#4C49AB"/>
+<stop offset="0.94" stop-color="#7E3B9B"/>
+<stop offset="0.97" stop-color="#C22985"/>
+<stop offset="0.99" stop-color="#ED1D77"/>
 </linearGradient>
 <radialGradient id="paint2_radial_248_2273" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(56.991 131.013) rotate(5.49688) scale(133.88 133.805)">
-<stop offset="0.28" stopColor="#008CFF"/>
-<stop offset="0.52" stopColor="#9435FF"/>
-<stop offset="0.7" stopColor="#D124DC"/>
-<stop offset="0.75" stopColor="#D629D1"/>
-<stop offset="0.84" stopColor="#E235B2"/>
-<stop offset="0.95" stopColor="#F64981"/>
-<stop offset="1" stopColor="#FF526B"/>
+<stop offset="0.28" stop-color="#008CFF"/>
+<stop offset="0.52" stop-color="#9435FF"/>
+<stop offset="0.7" stop-color="#D124DC"/>
+<stop offset="0.75" stop-color="#D629D1"/>
+<stop offset="0.84" stop-color="#E235B2"/>
+<stop offset="0.95" stop-color="#F64981"/>
+<stop offset="1" stop-color="#FF526B"/>
 </radialGradient>
 <linearGradient id="paint3_linear_248_2273" x1="68.2539" y1="-6.59796" x2="38.8021" y2="107.308" gradientUnits="userSpaceOnUse">
-<stop offset="0.08" stopColor="white"/>
-<stop offset="1" stopColor="white" stop-opacity="0"/>
+<stop offset="0.08" stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
 </linearGradient>
 <linearGradient id="paint4_linear_248_2273" x1="74.2058" y1="26.1274" x2="35.1307" y2="69.795" gradientUnits="userSpaceOnUse">
-<stop stopColor="#F2F9FF"/>
-<stop offset="0.8" stopColor="#C0D6F2"/>
-<stop offset="1" stopColor="#B3CDEC"/>
+<stop stop-color="#F2F9FF"/>
+<stop offset="0.8" stop-color="#C0D6F2"/>
+<stop offset="1" stop-color="#B3CDEC"/>
 </linearGradient>
 <clipPath id="clip0_248_2273">
 <rect width="97" height="98" fill="white"/>

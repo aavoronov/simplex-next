@@ -62,9 +62,6 @@ export default function Settings() {
     console.log(onFiles);
     return (
       <>
-        {/* <div style={{ width: 200, height: 20, zIndex: 100, backgroundColor: "salmon" }} onClick={() => console.log(files)}>
-          <span>huiblyat</span>
-        </div> */}
         <label className={`dzu-inputLabel`} style={{ position: "relative", height: 100 }}>
           {image ? (
             <img className='w-100 h-100' src={image.preview} alt='' />

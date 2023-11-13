@@ -30,7 +30,7 @@ export default function Invite() {
                 <div className='invite-share-name'>Ссылка на приглашение</div>
                 <div className='invite-share_row d-flex align-items-center justify-content-between'>
                   <div className='invite-share_link'>{inviteUrl}</div>
-                  <BtnCopy onClick={async () => await navigator.clipboard.writeText(inviteUrl)} />
+                  <BtnCopy onClick={() => navigator.clipboard.writeText(inviteUrl)} />
                 </div>
                 <button className='btn btn_invite-share d-flex align-items-center justify-content-center w-100'>Поделиться</button>
               </div>

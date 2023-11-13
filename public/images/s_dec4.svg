@@ -14,18 +14,18 @@
 </g>
 <defs>
 <radialGradient id="paint0_radial_250_2353" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(191.616 203.313) rotate(-5.53517) scale(164.342 164.342)">
-<stop stopColor="#F79F40"/>
-<stop offset="0.16" stopColor="#F7A542"/>
-<stop offset="0.37" stopColor="#F8B44A"/>
-<stop offset="0.6" stopColor="#FACE55"/>
-<stop offset="0.77" stopColor="#FBE660"/>
-<stop offset="0.91" stopColor="#FBF36F"/>
-<stop offset="0.93" stopColor="#FBF672"/>
-<stop offset="0.95" stopColor="#FBF676"/>
-<stop offset="0.96" stopColor="#FBF783"/>
-<stop offset="0.98" stopColor="#FCF897"/>
-<stop offset="0.99" stopColor="#FDFAB4"/>
-<stop offset="1" stopColor="#FDFBC2"/>
+<stop stop-color="#F79F40"/>
+<stop offset="0.16" stop-color="#F7A542"/>
+<stop offset="0.37" stop-color="#F8B44A"/>
+<stop offset="0.6" stop-color="#FACE55"/>
+<stop offset="0.77" stop-color="#FBE660"/>
+<stop offset="0.91" stop-color="#FBF36F"/>
+<stop offset="0.93" stop-color="#FBF672"/>
+<stop offset="0.95" stop-color="#FBF676"/>
+<stop offset="0.96" stop-color="#FBF783"/>
+<stop offset="0.98" stop-color="#FCF897"/>
+<stop offset="0.99" stop-color="#FDFAB4"/>
+<stop offset="1" stop-color="#FDFBC2"/>
 </radialGradient>
 <clipPath id="clip0_250_2353">
 <rect width="286" height="286" fill="white" transform="translate(0 92.0508) rotate(-18.7752)"/>

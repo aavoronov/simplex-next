@@ -6,24 +6,24 @@
 <path fill-rule="evenodd" clip-rule="evenodd" d="M10.25 6C10.25 8.34721 8.34722 10.25 6.00001 10.25C3.65279 10.25 1.75 8.34721 1.75 6C1.75 3.65279 3.65279 1.75 6.00001 1.75C8.34722 1.75 10.25 3.65279 10.25 6ZM9.97188 6.47305C9.99063 6.3138 10 6.14987 10 5.98593C9.99063 3.77517 8.19463 1.99533 5.98596 2.00001C3.7726 2.00938 1.99066 3.80328 2.00004 6.0234C2.00004 6.18734 2.0141 6.35127 2.03286 6.5152C2.061 6.74003 2.10789 6.96017 2.17354 7.17094C2.30953 7.62058 2.52524 8.04213 2.8066 8.41215C2.95666 8.60887 3.12547 8.79154 3.30836 8.96015C4.02113 9.6112 4.97306 10.0046 6.01409 9.99996C7.05512 9.99527 8.00236 9.59715 8.71045 8.94142C8.89802 8.76812 9.06684 8.58076 9.2169 8.37936C9.39509 8.14049 9.54515 7.88288 9.66707 7.60653C9.72334 7.48007 9.77024 7.34892 9.81244 7.21778C9.83589 7.14283 9.85464 7.07258 9.8734 6.99764C9.91561 6.82902 9.95312 6.65103 9.97188 6.47305Z" fill="url(#paint3_radial_243_7619)" fill-opacity="0.1"/>
 <defs>
 <linearGradient id="paint0_linear_243_7619" x1="6" y1="1.75006" x2="11.9014" y2="3.11611" gradientUnits="userSpaceOnUse">
-<stop stopColor="#FE6546"/>
-<stop offset="1" stopColor="#FF9E0D"/>
+<stop stop-color="#FE6546"/>
+<stop offset="1" stop-color="#FF9E0D"/>
 </linearGradient>
 <linearGradient id="paint1_linear_243_7619" x1="0.356101" y1="6.08096" x2="11.8052" y2="6.08096" gradientUnits="userSpaceOnUse">
-<stop stopColor="#FFFCA8"/>
-<stop offset="0.3123" stopColor="#FDB836"/>
-<stop offset="0.7592" stopColor="#FDC966"/>
-<stop offset="1" stopColor="#F1DC83"/>
+<stop stop-color="#FFFCA8"/>
+<stop offset="0.3123" stop-color="#FDB836"/>
+<stop offset="0.7592" stop-color="#FDC966"/>
+<stop offset="1" stop-color="#F1DC83"/>
 </linearGradient>
 <linearGradient id="paint2_linear_243_7619" x1="1.24485" y1="5.99844" x2="10.7521" y2="5.99844" gradientUnits="userSpaceOnUse">
-<stop stopColor="#FFFCA8"/>
-<stop offset="0.3123" stopColor="#FDB836"/>
-<stop offset="0.7592" stopColor="#FDC966"/>
-<stop offset="1" stopColor="#F1DC83"/>
+<stop stop-color="#FFFCA8"/>
+<stop offset="0.3123" stop-color="#FDB836"/>
+<stop offset="0.7592" stop-color="#FDC966"/>
+<stop offset="1" stop-color="#F1DC83"/>
 </linearGradient>
 <radialGradient id="paint3_radial_243_7619" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(5.99788 5.99786) scale(4.24793 4.24793)">
-<stop stopColor="white" stop-opacity="0"/>
-<stop offset="1" stopColor="#571600"/>
+<stop stop-color="white" stop-opacity="0"/>
+<stop offset="1" stop-color="#571600"/>
 </radialGradient>
 </defs>
 </svg>

@@ -95,7 +95,7 @@ export default function Product({ data }: { data: DataType }) {
 
   return (
     <MainLayout title={"Roblox"}>
-      <div className='content-column product_sold-out'>
+      <div className={`content-column ${data.product.status === "sold" && "product_sold-out"}`}>
         <div className='container'>
           <Breadcrumbs currentCrumbs={[data.product.name]} />
           {data.product.status === "sold" && (

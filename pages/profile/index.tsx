@@ -70,9 +70,14 @@ export default function Profile() {
                 <div className='seller-card d-flex align-items-center'>
                   <div className='seller-ava position-relative'>
                     {profilePic ? (
-                      <img className='w-100 h-100' src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/users/${profilePic}`} alt='' />
+                      <img
+                        className='w-100 h-100'
+                        style={{ borderRadius: 50 }}
+                        src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/users/${profilePic}`}
+                        alt=''
+                      />
                     ) : (
-                      <img className='w-100 h-100' src='../images/anonymous.png' alt='' />
+                      <img className='w-100 h-100' style={{ borderRadius: 50 }} src='../images/anonymous.png' alt='' />
                     )}
                     <div className='online-check position-absolute'></div>
                   </div>
