@@ -192,7 +192,7 @@ export const axiosQuery = async ({ method, url, noAuth, payload, onError }: Axio
   } catch (e) {
     console.log("e", e.response.data.message);
     onError && onError(e);
-    // throw new Error(e.response.data.message);
+    throw new Error(e.response.data.message);
   }
 };
 

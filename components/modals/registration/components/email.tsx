@@ -34,7 +34,7 @@ export default function Email({ invite }: { invite: string }) {
         setCookie("simple-token", res.data.token, { maxAge: 3600 * 24 * 30 });
       }
     } catch (e) {
-      dispatch(toggle({ type: "error", text: e.message }));
+      dispatch(toggle({ type: "error", text: e.response?.data?.message || e.message }));
     }
   };
 
