@@ -49,22 +49,13 @@ const SupportChat = forwardRef(
     const { width } = useWindowSize();
     const { login, profilePic } = useAppSelector((state) => state.user);
 
-    const bot = [
-      "Как купить?",
-      "Гарантии",
-      "Проблема с покупкой",
-      "Возврат",
-      "Как продать?",
-      "Вывод",
-      "Идеи и предложения",
-      "Технические проблемы",
-      "Летние скидки",
-      "Пригласи друга",
-    ];
-
     useEffect(() => {
       scrollToBottom();
     }, []);
+
+    const modifyChatInput = (text: string, setState: SetState<string>) => {
+      setState(text);
+    };
 
     //
 
@@ -107,6 +98,8 @@ const SupportChat = forwardRef(
         getMoreMessages();
       }
     };
+
+    const supportMessageHasBeenAdded = messages.filter((item) => item.roomId === -2).length > 1;
 
     return (
       <div className='chat-content h-100 overflow-hidden'>
@@ -172,19 +165,10 @@ const SupportChat = forwardRef(
                   );
                 });
             })()}
-            <div className='date-bar text-center'>Ожидайте, ваш вопрос на рассмотрении. Мы ответим в ближайшее время</div>
-            <div className='bot-menu d-flex align-items-center'>
-              {bot.map((value, i) => (
-                <button
-                  key={i}
-                  className='btn btn_bot-item'
-                  onClick={() => {
-                    console.log(value);
-                  }}>
-                  {value}
-                </button>
-              ))}
-            </div>
+            {supportMessageHasBeenAdded && (
+              <div className='date-bar text-center'>Ожидайте, ваш вопрос на рассмотрении. Мы ответим в ближайшее время</div>
+            )}
+
             <div className='scroll-dummy' ref={ref}></div>
           </div>
           <div className='chat-footer w-100'>

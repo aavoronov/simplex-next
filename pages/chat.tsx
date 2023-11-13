@@ -41,6 +41,7 @@ export interface IncomingMessage {
   userId: number;
   roomId: number;
   files?: string[];
+  previews?: string[];
   delivered: boolean;
 }
 
@@ -49,10 +50,11 @@ export interface OutgoingMessage {
   login: string;
   userId: number;
   roomId: number;
-  files?: {
+  files?: Array<{
     file: File;
     filename: string;
-  }[];
+  }>;
+  previews?: string[];
 }
 
 interface TimeRecord {
@@ -109,11 +111,11 @@ const simplexMessage: (params: SystemMessageParams) => IncomingMessage = (params
   delivered: true,
 });
 
-const supportMessage: (params: Pick<SystemMessageParams, "createdAt">) => IncomingMessage = (params) => ({
+const supportMessage: (params: Pick<SystemMessageParams, "createdAt">, userId: number) => IncomingMessage = (params, userId) => ({
   message: "Задать вопрос",
   createdAt: params.createdAt,
   name: "Поддержка",
-  userId: 0,
+  userId: userId,
   roomId: -2,
   delivered: true,
 });
@@ -182,7 +184,7 @@ export default function Chat() {
         });
         // console.log(initialMessages);
         // if (!fetchedMessages.length) setStartReached((prev) => !prev);
-        setMessages([simplexMessage({ createdAt, name: login }), supportMessage({ createdAt }), ...fetchedMessages]);
+        setMessages([simplexMessage({ createdAt, name: login }), supportMessage({ createdAt }, id), ...fetchedMessages]);
         // console.log(messages);
         setScrollPage((prev) => prev + 1);
       } catch (e) {

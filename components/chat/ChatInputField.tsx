@@ -45,15 +45,27 @@ const ChatInputField = ({ socket, activeChatId, isConnected, setMessages }: Prop
   };
 
   const sendSupportMessage = (payload: OutgoingMessage) => {
-    console.log(payload);
+    if (!!files.length) {
+      const outgoingMessageFiles = files.map((file: File) =>
+        Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        })
+      );
+      const previews = outgoingMessageFiles.map((item) => item.preview);
 
+      payload = { ...payload, previews: previews };
+    }
+
+    console.log(payload);
+    console.log(new Date().toISOString());
     const incomingMsg: IncomingMessage = {
       message: payload.text,
-      createdAt: new Date().toLocaleDateString(),
+      createdAt: new Date().toISOString(),
       name: "you",
-      userId: 0,
+      userId: id,
       roomId: -2,
       delivered: true,
+      previews: payload.previews,
       // files: payload.files
     };
     setMessages((prev) => [...prev, incomingMsg]);
@@ -64,19 +76,20 @@ const ChatInputField = ({ socket, activeChatId, isConnected, setMessages }: Prop
   const handleSend = isSupport ? sendSupportMessage : sendMessage;
 
   const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      if (event.shiftKey) {
-        setChatTextValue((prev) => prev + "\n");
-      } else {
-        event.preventDefault();
-        (chatTextValue || files.length) &&
-          handleSend({
-            login: login,
-            text: chatTextValue,
-            userId: id,
-            roomId: activeChatId,
-          });
-      }
+    if (event.key !== "Enter") {
+      return;
+    }
+    if (event.shiftKey) {
+      setChatTextValue((prev) => prev + "\n");
+    } else {
+      event.preventDefault();
+      (chatTextValue || files.length) &&
+        handleSend({
+          login: login,
+          text: chatTextValue,
+          userId: id,
+          roomId: activeChatId,
+        });
     }
   };
 
@@ -147,11 +160,39 @@ const ChatInputField = ({ socket, activeChatId, isConnected, setMessages }: Prop
     return () => files.forEach((i) => URL.revokeObjectURL(i.preview));
   }, []);
 
+  const bot = [
+    "Как купить?",
+    "Гарантии",
+    "Проблема с покупкой",
+    "Возврат",
+    "Как продать?",
+    "Вывод",
+    "Идеи и предложения",
+    "Технические проблемы",
+    "Летние скидки",
+    "Пригласи друга",
+  ];
+
   return (
     <>
       <ScrollContainer className='scroll-container d-flex flex-nowrap align-items-center list-none' horizontal vertical={false}>
         {thumbs}
       </ScrollContainer>
+      <div className='bot-menu d-flex align-items-center'>
+        {bot.map((value, i) => (
+          <button
+            key={i}
+            className='btn btn_bot-item'
+            onClick={() => {
+              // console.log(value);
+              setChatTextValue(value);
+              // modifyChatInput(value)
+              // set
+            }}>
+            {value}
+          </button>
+        ))}
+      </div>
       <div className='chat-footer-content d-flex align-items-end justify-content-between pt-3'>
         <div
           {...getRootProps({
@@ -164,6 +205,7 @@ const ChatInputField = ({ socket, activeChatId, isConnected, setMessages }: Prop
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setChatTextValue((e.target as HTMLInputElement).value);
             }}
+            onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => handleKeyPress(e)}
             placeholder={isConnected ? "Сообщение" : "Соединение прервано. Перезагрузите страницу"}
             style={{ backgroundColor: isConnected ? "initial" : "#FE654670" }}
             disabled={!isConnected}
@@ -189,7 +231,7 @@ const ChatInputField = ({ socket, activeChatId, isConnected, setMessages }: Prop
           </button>
         </div>
         <div className='attach'>
-          <input {...getInputProps()} ref={hiddenFileInput} type={"file"} multiple={true} className='d-none' onKeyUp={handleKeyPress} />
+          <input {...getInputProps()} ref={hiddenFileInput} type={"file"} multiple={true} className='d-none' />
           <button className='btn btn_attach' onClick={() => hiddenFileInput.current.click()}>
             <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'>
               <path

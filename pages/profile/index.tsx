@@ -82,7 +82,9 @@ export default function Profile() {
                     <div className='online-check position-absolute'></div>
                   </div>
                   <div className='seller-info position-relative'>
-                    <div className='seller-name'>{name}</div>
+                    <div className='seller-name' style={{ fontSize: 18 }}>
+                      {name}
+                    </div>
                     <div className='seller-raiting'>
                       <div className='item-raiting d-flex align-items-center'>
                         <div className='item-raiting_num'>{getPreciseAverage(profile.average)}</div>

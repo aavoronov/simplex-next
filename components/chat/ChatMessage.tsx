@@ -17,7 +17,7 @@ const ChatMessage = ({
   const userId = message.userId;
   const isMine = userId === id;
   // console.log(isMine, userId, id);
-  const hasImages = !!message.files?.length;
+  const hasImages = !!message.files?.length || message.previews?.length;
   let container = "msg-item d-flex position-relative";
   container += isMine ? " msg-out justify-content-end" : " msg-in";
   container += hasImages ? " msg-image" : "";
@@ -43,15 +43,21 @@ const ChatMessage = ({
     return msg;
   };
 
+  const incomingFilesRatherThanLocalPreviews = hasImages && message.files?.length && !message.previews?.length;
+  const messageFiles = incomingFilesRatherThanLocalPreviews ? message.files : message.previews;
+
   return (
     <div className={container}>
       <div className='msg-body'>
         {hasImages &&
-          message.files.map((item: string, index: number) => (
-            <Zoom key={index}>
-              <img className='w-100' src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/chat/${item}`} alt='' />
-            </Zoom>
-          ))}
+          messageFiles.map((item: string, index: number) => {
+            const url = incomingFilesRatherThanLocalPreviews ? `${process.env.NEXT_PUBLIC_API_URL}/uploads/chat/${item}` : item;
+            return (
+              <Zoom key={index}>
+                <img className='w-100' src={url} alt='' />
+              </Zoom>
+            );
+          })}
         <div className='msg-text'>
           <MessageText message={message.message} />
         </div>

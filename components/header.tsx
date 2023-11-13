@@ -5,10 +5,30 @@ import Registration from "./modals/registration/registration";
 import Login from "./modals/login";
 import { getCookie } from "cookies-next";
 import { useAppSelector } from "@/utilities/hooks";
+import { useRouter } from "next/router";
 
 export default function Header() {
   const { width } = useWindowSize();
   const [searchValue, setSearchValue] = useState("");
+  const router = useRouter();
+
+  const handleKeyPress = async (event) => {
+    console.log(event.keyCode);
+    if (event.keyCode !== 13) {
+      // setSearchValue(event.target.value);
+      return;
+    }
+
+    if (searchValue) {
+      event.preventDefault();
+      await router.push({
+        pathname: `/search`,
+        query: {
+          search: searchValue, // pass the id
+        },
+      });
+    }
+  };
 
   const { name, role, profilePic } = useAppSelector((state) => state.user);
 
@@ -27,6 +47,18 @@ export default function Header() {
             </span>
             Назад
           </button>
+          {/* <button
+            onClick={async (e) => {
+              e.preventDefault();
+              await router.push({
+                pathname: `/search`,
+                query: {
+                  search: searchValue, // pass the id
+                },
+              });
+            }}>
+            test
+          </button> */}
           <div className='header-search gradient w-100'>
             <form className='position-relative w-100' action=''>
               <input
@@ -35,6 +67,7 @@ export default function Header() {
                 placeholder='Поиск игр и приложений'
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
+                onKeyDown={async (e) => await handleKeyPress(e)}
               />
               <Link
                 href={{
