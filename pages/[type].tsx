@@ -21,7 +21,7 @@ export default function Apps({ initialApps, type }: { initialApps: App[]; type: 
 
     console.log(res.data);
     setApps((prev) => [...prev, ...res.data.rows]);
-    if (!res.data.rows.length) {
+    if (res.data.rows.length < 15) {
       setEndReached(true);
     }
     setPage((prev) => prev + 1);

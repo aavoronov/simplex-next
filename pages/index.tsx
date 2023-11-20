@@ -106,7 +106,7 @@ export default function Home() {
     const res = await axiosQuery({ url: `/products?page=${page}` });
     setProducts((prev) => [...prev, ...res.data]);
     setPage((prev) => prev + 1);
-    if (!res.data.length) {
+    if (res.data.length < 15) {
       setEndReached(true);
     }
     console.log(res.data);

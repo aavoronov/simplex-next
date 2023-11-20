@@ -350,7 +350,7 @@ export default function Catalog({ app }: { app: number }) {
     const res = await axiosQuery({ url: `/products/app/${app}?${queryParams.serialize()}` });
     setProducts((prev) => [...prev, ...res.data]);
     setPage((prev) => prev + 1);
-    if (!res.data.length) {
+    if (res.data.length < 15) {
       setEndReached(true);
     }
   };

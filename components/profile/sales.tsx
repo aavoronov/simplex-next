@@ -78,7 +78,7 @@ export default function Sales() {
     setSales((prev) => [...prev, ...res.data]);
     console.log(res.data);
     setPage((prev) => prev + 1);
-    if (!res.data.length) setEndReached(true);
+    if (res.data.length < 15) setEndReached(true);
   };
 
   useEffect(() => {

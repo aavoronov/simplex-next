@@ -46,7 +46,7 @@ const AppSelection = ({
   const getApps = async (page, search) => {
     const res = await axiosQuery({ url: `/apps?type=apps&page=${page}&search=${search}` });
     setApps((prev) => [...prev, ...res.data.rows]);
-    if (!res.data.rows.length) {
+    if (res.data.rows.length < 15) {
       setAppEndReached(true);
     }
     setAppCount(res.data.count);
@@ -56,7 +56,7 @@ const AppSelection = ({
   const getGames = async (page, search) => {
     const res = await axiosQuery({ url: `/apps?type=games&page=${page}&search=${search}` });
     setGames((prev) => [...prev, ...res.data.rows]);
-    if (!res.data.rows.length) {
+    if (res.data.rows.length < 15) {
       setGameEndReached(true);
     }
     setGameCount(res.data.count);

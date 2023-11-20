@@ -140,7 +140,7 @@ export default function Reviews({ data, user, userId }: { data: Review[]; user: 
     setReviews((prev) => [...prev, ...res.data]);
     console.log(res.data);
     setPage((prev) => prev + 1);
-    if (!res.data.length) setEndReached(true);
+    if (res.data.length < 15) setEndReached(true);
   };
 
   // useEffect(() => {

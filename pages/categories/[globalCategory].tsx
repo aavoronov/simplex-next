@@ -54,7 +54,7 @@ export default function GlobalCategory({ globalCategory, name }: { globalCategor
     console.log(res.data);
     setProducts((prev) => [...prev, ...res.data]);
     setPage((prev) => prev + 1);
-    if (!res.data.length) setEndReached(true);
+    if (res.data.length < 15) setEndReached(true);
   };
 
   useEffect(() => {
