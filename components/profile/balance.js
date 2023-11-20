@@ -27,7 +27,7 @@ export default function Balance() {
       <div className='history_content history-balance_content'>
         <div className='history-head d-flex align-items-center justify-content-between'>
           <div className='history_title'>История</div>
-          <BtnSort />
+          {/* <BtnSort /> */}
         </div>
         <div className='filter-wrapper d-flex align-items-center'>
           <button className='btn btn_filter d-flex align-items-center justify-content-center'>

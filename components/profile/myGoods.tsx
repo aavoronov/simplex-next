@@ -64,7 +64,7 @@ export default function MyGoods() {
             </ScrollContainer>
           </div>
         </div>
-        <BtnSort />
+        {/* <BtnSort /> */}
       </div>
       <div className='goods_content'>
         <div className='goods_content-list d-grid justify-content-between'>

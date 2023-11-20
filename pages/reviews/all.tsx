@@ -249,7 +249,7 @@ export default function ReviewsAll({ data, stats }: { data: Review[]; stats: Sta
                   </ScrollContainer>
                 </div>
               </div>
-              <BtnSort />
+              {/* <BtnSort /> */}
             </div>
             <div className='reviews-content d-grid'>
               {reviews.map((value, i) => (

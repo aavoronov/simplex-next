@@ -3,6 +3,7 @@ import PublishedModal from "@/components/modals/published";
 import Pagination from "@/components/pagination";
 import { MainLayout } from "@/layouts/MainLayout";
 import { SetState, axiosQuery } from "@/utilities/utilities";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 interface App {
@@ -17,22 +18,26 @@ const AppSelection = ({
   appsCount,
   gamesCount,
   initialSearch,
+  initialAppEndReached,
+  initialGameEndReached,
 }: {
   initialApps: App[];
   initialGames: App[];
   appsCount: number;
   gamesCount: number;
   initialSearch: string;
+  initialAppEndReached: boolean;
+  initialGameEndReached: boolean;
 }) => {
   const [activeCategory, setActiveCategory] = useState("games");
 
   const [apps, setApps] = useState<App[]>(initialApps);
-  const [appEndReached, setAppEndReached] = useState(false);
+  const [appEndReached, setAppEndReached] = useState(initialAppEndReached);
   const [appPage, setAppPage] = useState(2);
   const [appCount, setAppCount] = useState(appsCount);
 
   const [games, setGames] = useState<App[]>(initialGames);
-  const [gameEndReached, setGameEndReached] = useState(false);
+  const [gameEndReached, setGameEndReached] = useState(initialGameEndReached);
   const [gamePage, setGamePage] = useState(2);
   const [gameCount, setGameCount] = useState(gamesCount);
 
@@ -83,6 +88,8 @@ const AppSelection = ({
     setGamePage(1);
     getApps(1, e.target.value);
     getGames(1, e.target.value);
+    setAppEndReached(false);
+    setGameEndReached(false);
   };
 
   return (
@@ -131,7 +138,8 @@ const AppSelection = ({
       </div>
       <div className='gaa-catalog d-grid'>
         {displayEntities.map((item, i) => (
-          <div
+          <Link
+            href={`/catalog/${item.id}`}
             key={item.id}
             className='gaa-item d-flex'
             style={{ cursor: "pointer" }}
@@ -144,7 +152,7 @@ const AppSelection = ({
             <div className='gaa-item-info'>
               <p className='gaa-item_name two-lines'>{item.name}</p>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
       {!endReached && <Pagination onClick={getMore} />}
@@ -152,7 +160,7 @@ const AppSelection = ({
   );
 };
 
-export default function Search({ apps, games, appsCount, gamesCount, initialSearch }) {
+export default function Search({ apps, games, appsCount, gamesCount, initialSearch, initialAppEndReached, initialGameEndReached }) {
   return (
     <MainLayout title={"Продать"}>
       <div className='content-column'>
@@ -165,6 +173,8 @@ export default function Search({ apps, games, appsCount, gamesCount, initialSear
             appsCount={appsCount}
             gamesCount={gamesCount}
             initialSearch={initialSearch}
+            initialAppEndReached={initialAppEndReached}
+            initialGameEndReached={initialGameEndReached}
           />
         </div>
         <PublishedModal />
@@ -189,6 +199,8 @@ export async function getServerSideProps({ query }) {
       games: games.data.rows,
       gamesCount: games.data.count,
       initialSearch: search,
+      initialAppEndReached: apps.data.count === 0,
+      initialGameEndReached: games.data.count === 0,
     }, // will be passed to the page component as props
   };
 }

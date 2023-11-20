@@ -135,8 +135,8 @@ function Filter({
   };
   const initialProperties: Record<string, string> = Object.fromEntries(constraints.map((item) => [`properties.${item.name}`, null]));
   const [productCount, setProductCount] = useState(null);
-  const [priceFrom, setPriceFrom] = useState<number>();
-  const [priceTo, setPriceTo] = useState<number>();
+  const [priceFrom, setPriceFrom] = useState<number>(null);
+  const [priceTo, setPriceTo] = useState<number>(null);
   const [discount, setDiscount] = useState(false);
   const [withReviews, setWithReviews] = useState(false);
 
@@ -175,6 +175,14 @@ function Filter({
     getProductCount();
   }, [properties, categoryId, priceTo, priceFrom, discount, withReviews]);
 
+  const resetEverything = () => {
+    setProperties(initialProperties);
+    setPriceTo(null);
+    setPriceFrom(null);
+    setDiscount(false);
+    setWithReviews(false);
+  };
+
   return (
     <>
       <Modal
@@ -210,7 +218,7 @@ function Filter({
           {(props) => (
             <Form className='filter-form d-flex flex-column align-items-center w-100'>
               <div className='filter-header d-flex justify-content-center position-relative w-100'>
-                <button className='btn btn_resset-filter position-absolute start-0 top-0' onClick={() => setProperties(initialProperties)}>
+                <button className='btn btn_resset-filter position-absolute start-0 top-0' onClick={resetEverything}>
                   Сбросить
                 </button>
                 <div className='modal-title text-center'>{name}</div>
@@ -228,7 +236,7 @@ function Filter({
                       type='text'
                       name='price_from'
                       placeholder='От'
-                      value={priceFrom}
+                      value={priceFrom ? priceFrom : ""}
                       onChange={(e) => setPriceFrom(e.target.value)}
                     />
                     —
@@ -237,7 +245,7 @@ function Filter({
                       type='text'
                       name='price_to'
                       placeholder='До'
-                      value={priceTo}
+                      value={priceTo ? priceTo : ""}
                       onChange={(e) => setPriceTo(e.target.value)}
                     />
                   </div>

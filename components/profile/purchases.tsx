@@ -97,7 +97,7 @@ const Purchase = ({ purchase }: { purchase: Purchase }) => {
         <div className='history-table-item_info_date'>{currentDatetime(purchase.createdAt)}</div>
       </div>
       <div className='history-table-item_cat'>
-        <Link href='/catalog/' className='product-cat d-flex'>
+        <Link href={`/products/${purchase.product.id}`} className='product-cat d-flex'>
           <div className='product-cat-icon'>
             <img
               src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/apps/${purchase.product.category.app.miniPic}`}
@@ -111,7 +111,9 @@ const Purchase = ({ purchase }: { purchase: Purchase }) => {
           </div>
         </Link>
       </div>
-      <div className='history-table-item_name two-lines'>{purchase.product.name}</div>
+      <Link href={`/products/${purchase.product.id}`}>
+        <div className='history-table-item_name two-lines'>{purchase.product.name}</div>
+      </Link>
       <div className='history-table-item_price text-center'>{purchase.sum} ₽</div>
       <div className='history-table-item_status'>
         <Status />
@@ -157,7 +159,7 @@ export default function Purchases() {
             </ScrollContainer>
           </div>
         </div>
-        <BtnSort />
+        {/* <BtnSort /> */}
       </div>
       <div className='history_content history-purchases_content'>
         <div className='history-table'>

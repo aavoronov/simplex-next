@@ -73,7 +73,7 @@ export default function ReviewForm({
         <div
           className='buyer-stars'
           style={{ flexDirection: "row", display: "flex", justifyContent: "flex-start", width: "100%", gap: 10, marginBottom: 30 }}>
-          <svg width='191' height='31' viewBox='0 0 191 31' fill='none' xmlns='http://www.w3.org/2000/svg'>
+          <svg width='191' height='31' viewBox='0 0 191 31' fill='none' xmlns='http://www.w3.org/2000/svg' style={{ cursor: "pointer" }}>
             <path
               onClick={() => setRating(1)}
               onMouseEnter={() => setHover(1)}

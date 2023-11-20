@@ -86,9 +86,7 @@ export default function Sales() {
   }, []);
   return (
     <>
-      <div className='profile-content_head d-flex align-items-center justify-content-between'>
-        <BtnSort />
-      </div>
+      <div className='profile-content_head d-flex align-items-center justify-content-between'>{/* <BtnSort /> */}</div>
       <div className='history_content history-purchases_content'>
         <div className='history-table'>
           {sales.map((item) => (

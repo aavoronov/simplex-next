@@ -11,7 +11,7 @@ export default function PublishedModal() {
   const router = useRouter();
   const publishedModalAction = () => {
     dispatch(actionPublished());
-    router.replace("/");
+    router.replace("/profile");
   };
 
   return (
@@ -38,7 +38,11 @@ export default function PublishedModal() {
         </button>
         <div className='modal-published-title text-center'>Ваш товар успешно опубликован</div>
         <div className='modal-published-text w-100 mx-auto text-center'>Проследить можно в личном кабинете</div>
-        <Link href='/profile' className='btn btn_submit btn_submit-green'>
+        <Link
+          onClick={() => dispatch(actionPublished())}
+          href='/profile'
+          className='btn btn_submit btn_submit-green'
+          style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
           В личный кабинет
         </Link>
       </Modal>

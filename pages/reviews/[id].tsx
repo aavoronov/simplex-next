@@ -255,7 +255,7 @@ export default function Reviews({ data, user, userId }: { data: Review[]; user: 
                   </ScrollContainer>
                 </div>
               </div>
-              <BtnSort />
+              {/* <BtnSort /> */}
             </div>
             <div className='reviews-content d-grid'>
               {reviews.map((value, i) => (

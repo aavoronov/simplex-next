@@ -30,17 +30,18 @@ export default function FilterHome() {
       <div className='filters-horizontal_items'>
         <ScrollContainer className='filters_scroll d-flex align-items-center'>
           {cats.map((value, i) => (
-            <button key={i} className={`btn btn_filter-item`}>
-              <Link
-                href={{
-                  pathname: `/categories/[globalCategory]`,
-                  query: {
-                    globalCategory: i + 1, // pass the id
-                  },
-                }}>
-                {value}
-              </Link>
-            </button>
+            <Link
+              key={i}
+              className={`btn btn_filter-item`}
+              style={{ display: "flex", alignItems: "center" }}
+              href={{
+                pathname: `/categories/[globalCategory]`,
+                query: {
+                  globalCategory: i + 1, // pass the id
+                },
+              }}>
+              {value}
+            </Link>
           ))}
         </ScrollContainer>
       </div>
