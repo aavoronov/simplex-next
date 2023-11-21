@@ -1,16 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import BtnDelete from "./btnDelete";
 import { ProductThumbnail } from "@/pages";
-import { getPreciseAverage } from "@/utilities/utilities";
+import { axiosQuery, getPreciseAverage } from "@/utilities/utilities";
+import { useAppDispatch } from "@/utilities/hooks";
+import { toggle } from "@/store/notificationsSlice";
+import { Product } from "./profile/myGoods";
 
-export default function ProductItemPersonal({ item, cats = true }: { item: Partial<ProductThumbnail>; cats?: boolean }) {
+// interface Product extends ProductThumbnail {
+//   status: "sold" | "active";
+// }
+
+export default function ProductItemPersonal({ item, cats = true }: { item: Partial<Product>; cats?: boolean }) {
   const isNew = true;
   const isDiscount = true;
+  const dispatch = useAppDispatch();
+
+  const [isSold, setIsSold] = useState(item.status === "sold");
+
+  const deleteProduct = async () => {
+    const res = await axiosQuery({ url: `/products/${item.id}`, method: "patch", payload: { status: "sold" } });
+    if (res.data.status === 200) {
+      setIsSold(true);
+      dispatch(toggle({ text: "Товар отмечен как проданный", type: "success" }));
+    }
+  };
 
   return (
     <div className='product-item d-flex flex-column position-relative'>
-      <BtnDelete />
+      {!isSold && <BtnDelete onClick={deleteProduct} />}
       {cats && (
         <Link href='' className='product-cat d-flex'>
           <div className='product-cat-icon'>

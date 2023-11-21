@@ -1,8 +1,8 @@
 import React from "react";
 
-export default function BtnDelete() {
+export default function BtnDelete({ onClick }: { onClick: () => void }) {
   return (
-    <button className='btn btn_delete'>
+    <button className='btn btn_delete' onClick={onClick}>
       <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'>
         <path d='M3 6H5H21' stroke='black' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' />
         <path
