@@ -30,7 +30,7 @@ export default function MyGoods() {
   const filters = [
     { name: "Все", key: "all" },
     { name: "Активные", key: "active" },
-    { name: "Скрытые", key: "hidden" },
+    // { name: "Скрытые", key: "hidden" },
     { name: "Проданные", key: "sold" },
   ];
   const [filter, setFilter] = useState(filters[0]);
