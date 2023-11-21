@@ -10,7 +10,7 @@ export default function ProductItem({ item, del, cats = true }: { item: ProductT
 
   return (
     <div className='product-item d-flex flex-column position-relative'>
-      {del && <BtnDelete />}
+      {del && <BtnDelete onClick={null} />}
       {cats && (
         <Link href='' className='product-cat d-flex'>
           <div className='product-cat-icon'>

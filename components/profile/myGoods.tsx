@@ -8,7 +8,7 @@ import ProductItem from "@/components/productItem";
 import { axiosQuery } from "@/utilities/utilities";
 import ProductItemPersonal from "../productItemPersonal";
 
-interface Product {
+export interface Product {
   id: number;
   name: string;
   description: string;
