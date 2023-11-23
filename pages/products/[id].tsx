@@ -149,7 +149,7 @@ export default function Product({ data }: { data: DataType }) {
                         alt=''
                       />
                     ) : (
-                      <FirstLetter nickname={data.product.name} width={50} height={50} fontSize={40} />
+                      <FirstLetter nickname={data.user.name} width={50} height={50} fontSize={40} />
                     )}
                   </div>
                   {/* <div className='online-check position-absolute'></div> */}
