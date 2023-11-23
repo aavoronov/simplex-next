@@ -6,6 +6,7 @@ import Login from "./modals/login";
 import { getCookie } from "cookies-next";
 import { useAppSelector } from "@/utilities/hooks";
 import { useRouter } from "next/router";
+import FirstLetter from "./FirstLetter";
 
 export default function Header() {
   const { width } = useWindowSize();
@@ -103,7 +104,7 @@ export default function Header() {
                   {profilePic ? (
                     <img className='w-100 h-100' src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/users/${profilePic}`} alt='' />
                   ) : (
-                    <img className='w-100 h-100' src='../images/anonymous.png' alt='' />
+                    <FirstLetter nickname={name} />
                   )}
                 </Link>
               </div>
@@ -188,9 +189,9 @@ export default function Header() {
             <span className='mobile_navigation-icon d-flex align-items-center justify-content-center'>
               {profilePic ? (
                 <img className='w-100 h-100' src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/users/${profilePic}`} alt='' />
-              ) : (
-                <img className='w-100 h-100' src='../images/anonymous.png' alt='' />
-              )}
+              ) : name ? (
+                <FirstLetter nickname={name} width={25} height={25} fontSize={18} />
+              ) : null}
             </span>
             <span className='mobile_navigation-name'>Профиль</span>
           </Link>

@@ -14,6 +14,7 @@ import { axiosQuery, getPreciseAverage, getPrettyAge } from "@/utilities/utiliti
 import { actionPayment } from "@/store/actions/modal";
 import { useAppDispatch } from "@/utilities/hooks";
 import Payment from "@/components/modals/payment";
+import FirstLetter from "@/components/FirstLetter";
 
 export interface Review {
   id: number;
@@ -148,7 +149,7 @@ export default function Product({ data }: { data: DataType }) {
                         alt=''
                       />
                     ) : (
-                      <img className='w-100 h-100' src='../images/anonymous.png' alt='' />
+                      <FirstLetter nickname={data.product.name} width={50} height={50} fontSize={40} />
                     )}
                   </div>
                   {/* <div className='online-check position-absolute'></div> */}

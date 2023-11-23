@@ -1,6 +1,7 @@
 import { IChat, IncomingMessage } from "@/pages/chat";
 import { useAppSelector } from "@/utilities/hooks";
 import { SetState, currentDatetime } from "@/utilities/utilities";
+import FirstLetter from "../FirstLetter";
 
 const Chat = ({
   chat,
@@ -36,7 +37,7 @@ const Chat = ({
               alt=''
             />
           ) : (
-            <img className='w-100 h-100' src='../images/anonymous.png' alt='' />
+            <FirstLetter nickname={chat.accesses[0].user.name} />
           )}
         </div>
         {(isOnline || !!chat.type) && <div className='online-check position-absolute'></div>}

@@ -7,6 +7,7 @@ import ChatMessage from "./ChatMessage";
 import { IChat, IncomingMessage, OutgoingMessage } from "@/pages/chat";
 import { useAppSelector } from "@/utilities/hooks";
 import ChatInputField from "./ChatInputField";
+import FirstLetter from "../FirstLetter";
 
 interface Props {
   activeChatId: number;
@@ -37,7 +38,7 @@ const SimplexChat = ({ activeChatId, messages, setActiveChatId, chats, users, us
                 {user.profilePic ? (
                   <img className='w-100 h-100' src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/users/${user.profilePic}`} alt='' />
                 ) : (
-                  <img className='w-100 h-100' src='../images/anonymous.png' alt='' />
+                  <FirstLetter nickname='Simplex' width={38} height={38} fontSize={25} />
                 )}
               </div>
               <div className='online-check position-absolute'></div>

@@ -8,6 +8,7 @@ import BtnSort from "@/components/btnSort";
 import { axiosQuery, currentDatetime, getPreciseAverage } from "@/utilities/utilities";
 import { GetStaticPaths } from "next";
 import Link from "next/link";
+import FirstLetter from "@/components/FirstLetter";
 
 const ReviewsCard = ({ review }: { review: Review }) => {
   return (
@@ -18,7 +19,7 @@ const ReviewsCard = ({ review }: { review: Review }) => {
             {review.user.profilePic ? (
               <img className='w-100 h-100' src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/users/${review.user.profilePic}`} alt='' />
             ) : (
-              <img className='w-100 h-100' src='../images/anonymous.png' alt='' />
+              <FirstLetter nickname={review.user.name} width={32} height={32} fontSize={24} />
             )}
           </div>
           <div className='buyer-info'>

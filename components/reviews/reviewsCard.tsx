@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { ProductWithReviews, Review } from "@/pages/products/[id]";
 import { currentDatetime } from "@/utilities/utilities";
+import FirstLetter from "../FirstLetter";
 
 export default function ReviewsCard({ product }: { product: ProductWithReviews }) {
   return product.reviews.map((review) => {
@@ -13,7 +14,7 @@ export default function ReviewsCard({ product }: { product: ProductWithReviews }
               {review.user.profilePic ? (
                 <img className='w-100 h-100' src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/users/${review.user.profilePic}`} alt='' />
               ) : (
-                <img className='w-100 h-100' src='../images/anonymous.png' alt='' />
+                <FirstLetter nickname={review.user.name} width={32} height={32} fontSize={24} />
               )}
             </div>
             <div className='buyer-info'>

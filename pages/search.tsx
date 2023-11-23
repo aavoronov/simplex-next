@@ -94,7 +94,7 @@ const AppSelection = ({
 
   return (
     <>
-      <div className='sell_search gradient'>
+      {/* <div className='sell_search gradient'>
         <form className='position-relative w-100' action=''>
           <input
             className='search-input w-100'
@@ -115,7 +115,7 @@ const AppSelection = ({
             </svg>
           </button>
         </form>
-      </div>
+      </div> */}
       <div className='sell_choose d-flex align-items-center'>
         <button
           id='c_0'

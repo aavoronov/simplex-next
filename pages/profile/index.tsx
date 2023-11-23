@@ -12,6 +12,7 @@ import { axiosQuery, getPreciseAverage, getPrettyAge } from "@/utilities/utiliti
 import { useAppDispatch, useAppSelector } from "@/utilities/hooks";
 import { actionLoginTrue } from "@/store/actions/modal";
 import { getCookie } from "cookies-next";
+import FirstLetter from "@/components/FirstLetter";
 
 interface Profile {
   id: number;
@@ -77,7 +78,7 @@ export default function Profile() {
                         alt=''
                       />
                     ) : (
-                      <img className='w-100 h-100' style={{ borderRadius: 50 }} src='../images/anonymous.png' alt='' />
+                      <FirstLetter nickname={name} width={70} height={70} fontSize={60} />
                     )}
                     <div className='online-check position-absolute'></div>
                   </div>

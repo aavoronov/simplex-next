@@ -9,6 +9,7 @@ import { updateProfile } from "@/store/userSlice";
 import { getDroppedOrSelectedFiles } from "html5-file-selector";
 
 import Dropzone from "react-dropzone-uploader";
+import FirstLetter from "../FirstLetter";
 
 interface Image {
   file: File;
@@ -68,7 +69,7 @@ export default function Settings() {
           ) : profilePic ? (
             <img className='w-100 h-100' src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/users/${profilePic}`} alt='' />
           ) : (
-            <img className='w-100 h-100' src='../images/anonymous.png' alt='' />
+            <FirstLetter nickname={name} width={100} height={100} fontSize={80} />
           )}
           <input
             disabled={false}
